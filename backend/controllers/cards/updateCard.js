@@ -2,11 +2,13 @@ const Card = require('../../models/cardModel');
 
 exports.updateCard = async (req, res, next) => {
   try {
+    const { name, value, description, collectionId } = req.body;
+
     const card = await Card.findByIdAndUpdate(req.params.id, {
-      name: req.body.name,
-      value: req.body.value,
-      description: req.body.description,
-      collectionId: req.body.collectionId,
+      name,
+      value,
+      description,
+      collectionId,
     },{
       new: true,
       runValidators: true,

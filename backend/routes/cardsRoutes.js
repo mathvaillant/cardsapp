@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 
 const { protect } = require("../middlewares/protect");
+const { cardRouteRestrictTo } = require("../middlewares/cardRouteRestrictTo");
 const { createNewCard } = require("../controllers/cards/createNewCard");
 const { getAllCards } = require("../controllers/cards/getAllCards");
-const { getCard } = require("../controllers/cards/getCard");
+const { getSingleCard } = require("../controllers/cards/getSingleCard");
 const { updateCard } = require("../controllers/cards/updateCard");
 const { deleteCard } = require("../controllers/cards/deleteCard");
 
@@ -16,8 +17,8 @@ router
 
 router
   .route('/:id')
-  .all(protect)
-  .get(getCard)
+  .all(protect, cardRouteRestrictTo('admin', 'requestPerformer'))
+  .get(getSingleCard)
   .patch(updateCard)
   .delete(deleteCard)
 

@@ -2,10 +2,9 @@ const CardCollection = require('../../models/cardCollectionModel');
 
 exports.updateCollection = async (req, res, next) => {
   try {
-    const collection = await CardCollection.findByIdAndUpdate(req.params.id, {
-      name: req.body.name,
-      cards: req.body.cards,
-    },{
+    const { name, cards } = req.body;
+
+    const collection = await CardCollection.findByIdAndUpdate(req.params.id, { name, cards } , { 
       new: true,
       runValidators: true,
     });

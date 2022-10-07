@@ -6,9 +6,8 @@ const collectionSchema = mongoose.Schema({
     required: true,
   },
   createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     required: true,
-    ref: 'User'
   },
   cards: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -19,4 +18,6 @@ const collectionSchema = mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('CardCollection', collectionSchema);
+const CardCollection = mongoose.model('CardCollection', collectionSchema);
+
+module.exports = CardCollection;

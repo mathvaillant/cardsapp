@@ -7,9 +7,11 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Box from '@mui/material/Box';
 import { CardActionArea } from '@mui/material';
+import { useAppSelector } from "../../app/hooks";
 
 const HomePage = () => {
   const navigator = useNavigate();
+  const username = useAppSelector(state => state?.auth?.user?.username)
 
   const handleGoTo = (e: React.MouseEvent<HTMLElement>, path: string) => {
     e.preventDefault();
@@ -32,7 +34,7 @@ const HomePage = () => {
           color="text.primary"
           gutterBottom
         >
-          Welcome back!
+          Welcome back, {username}!
         </Typography>
 
         <Container sx={{ py: 8, display: 'flex', gap: 4 }} maxWidth="lg">

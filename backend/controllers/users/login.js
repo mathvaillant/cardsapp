@@ -12,7 +12,13 @@ exports.login = async (req, res, next) => {
 
     const user = await User.findOne({ username }).select('+password');
 
-    if(!user || !(await user.isPasswordCorrect(password, user.password))) {
+    if(!user) {
+      throw new AppError('User not found', 400);
+    }
+
+    const isPasswordCorrect = await user.isPasswordCorrect(password, user.password);
+
+    if(!isPasswordCorrect) {
       throw new AppError('Incorrect username or password', 400);
     }
 

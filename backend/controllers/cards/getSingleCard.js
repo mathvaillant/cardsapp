@@ -1,8 +1,8 @@
 const Card = require('../../models/cardModel');
 
-exports.getCard = async (req, res, next) => {
+exports.getSingleCard = async (req, res, next) => {
   try {
-    const card = await Card.findOne({ id: req.params.id });
+    const card = await Card.findOne({ _id: req.params.id });
 
     res.status(200).json({
       status: 'success',

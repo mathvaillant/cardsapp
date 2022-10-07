@@ -1,6 +1,6 @@
 const CardCollection = require('../../models/cardCollectionModel');
 
-exports.getCollection = async (req, res, next) => {
+exports.getSingleCollection = async (req, res, next) => {
   try {
     const collection = await CardCollection.findOne({ id: req.params.id });
 

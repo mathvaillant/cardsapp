@@ -20,10 +20,13 @@ const cardSchema = mongoose.Schema({
   },
   collectionId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'CardCollection'
+    ref: 'CardCollection',
+    default: null,
   },
 }, {
-  timestamps: true
+  timestamps: true,
 });
 
-module.exports = mongoose.model('Card', cardSchema);
+const Card = mongoose.model('Card', cardSchema);
+
+module.exports = Card;

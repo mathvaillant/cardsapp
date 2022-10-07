@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 
 const { protect } = require("../middlewares/protect");
+const { collectionRouteRestrictTo } = require("../middlewares/collectionRouteRestrictTo");
 const { createNewCollection } = require("../controllers/cardsCollections/createNewCollection");
 const { getAllCollections } = require("../controllers/cardsCollections/getAllCollections");
-const { getCollection } = require("../controllers/cardsCollections/getCollection");
+const { getSingleCollection } = require("../controllers/cardsCollections/getSingleCollection");
 const { updateCollection } = require("../controllers/cardsCollections/updateCollection");
 const { deleteCollection } = require("../controllers/cardsCollections/deleteCollection");
 
@@ -16,8 +17,8 @@ router
 
 router
   .route('/:id')
-  .all(protect)
-  .get(getCollection)
+  .all(protect, collectionRouteRestrictTo('admin', 'requestPerformer'))
+  .get(getSingleCollection)
   .patch(updateCollection)
   .delete(deleteCollection)
 

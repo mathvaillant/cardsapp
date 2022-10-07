@@ -11,6 +11,7 @@ import useDebounce from "../../hooks/useDebounce";
 import NewCardModal from "./components/NewCardModal";
 import SearchInput from "../../components/SearchInput";
 import BackButton from "../../components/BackButton";
+import { Typography } from "@mui/material";
 
 const Cards = () => {
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ const Cards = () => {
         </Button>
         <SearchInput value={ filterValue } onSearch={ handleSearch } />
         <Container sx={ { display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'center' } } maxWidth="lg">
-          { cardsToShow.map((card, index) => {
+          { cardsToShow.length ? cardsToShow.map((card, index) => {
             return (
               <CardItem 
                 key={ `${card.name}-${index}` }
@@ -66,7 +67,7 @@ const Cards = () => {
                 index={ index } 
               />
             );
-          }) }
+          }) : <Typography variant="h6">No cards to show</Typography> }
         </Container>
       </Box>
       <NewCardModal 
