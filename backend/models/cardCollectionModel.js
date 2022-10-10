@@ -9,11 +9,6 @@ const collectionSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  cards: [{
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: 'Card'
-  }],
 }, {
   timestamps: true
 });
