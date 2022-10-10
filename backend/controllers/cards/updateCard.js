@@ -1,4 +1,6 @@
 const Card = require('../../models/cardModel');
+const PusherInit = require('../../pusher');
+const { CHANNEL_NAME } = require('./constants');
 
 exports.updateCard = async (req, res, next) => {
   try {
@@ -14,8 +16,14 @@ exports.updateCard = async (req, res, next) => {
       runValidators: true,
     });
 
+    PusherInit.trigger(CHANNEL_NAME, 'child_updated', {
+      message: 'Card updated',
+      carId: card._id,  
+    });
+
     res.status(200).json({
       status: 'success',
+      message: 'Card successfully updated!',
       data: { card }
     })
   } catch (error) {

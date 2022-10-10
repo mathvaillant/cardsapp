@@ -3,7 +3,7 @@ const { signToken } = require("./signToken");
 exports.createSendToken = (user, statusCode, res) => {
   const token = signToken(user.id);
 
-  const data ={
+  const responseData = {
     user: {
       token,
       id: user.id,
@@ -17,6 +17,6 @@ exports.createSendToken = (user, statusCode, res) => {
   
   return res.status(statusCode).json({
     status: 'success',
-    data,
+    data: responseData,
   });
 };

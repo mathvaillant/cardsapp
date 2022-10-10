@@ -12,6 +12,8 @@ import Cards from "./pages/Cards/Cards";
 import Collections from "./pages/Collections/Collections";
 import AppOn from "./AppOn";
 import './App.scss';
+import CardItem from "./components/CardItem/CardItem";
+import CardSidebar from "./pages/Cards/components/CardSidebar";
 
 const theme = createTheme({
   palette: {
@@ -41,9 +43,11 @@ function App() {
           <Routes>
             <Route path="/" element={<AppOn />}>
               <Route path="home" element={<HomePage/>}/>
-              <Route path="users" element={<Users/>}/>
-              <Route path="cards" element={<Cards/>}/>
+              <Route path="cards" element={<Cards/>}>
+                <Route path=':id' element={<CardSidebar />} />
+              </Route>
               <Route path="collections" element={<Collections/>}/>
+              <Route path="users" element={<Users/>}/>
             </Route>
             <Route path="login" element={<Login/>}/>
             <Route path="signup" element={<SignUp/>}/>

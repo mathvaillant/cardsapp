@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { getCardColors } = require("../utils/getCardColors");
 
 const cardSchema = mongoose.Schema({
   name: {
@@ -23,6 +24,10 @@ const cardSchema = mongoose.Schema({
     ref: 'CardCollection',
     default: null,
   },
+  colors: {
+    type: [String],
+    default: getCardColors(),
+  }
 }, {
   timestamps: true,
 });

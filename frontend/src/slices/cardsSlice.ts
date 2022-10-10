@@ -10,6 +10,7 @@ export interface ICard {
   collectionId: string | undefined
   createdAt: string
   updatedAt: string
+  colors: string[]
 }
 
 const initialState: ICard[] = [];

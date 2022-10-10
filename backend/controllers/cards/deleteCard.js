@@ -1,14 +1,23 @@
 const Card = require('../../models/cardModel');
+const User = require('../../models/userModel');
+const PusherInit = require('../../pusher');
+const { CHANNEL_NAME } = require('./constants');
 
 exports.deleteCard = async (req, res, next) => {
   try {
-    // 1 - Delete card
-    await Card.findByIdAndDelete(req.params.id);
+    const deletedCard = await Card.findByIdAndDelete(req.params.id);
 
-    // 2 - Delete this card id from the user (createdBy) cards
+    await User.findByIdAndUpdate(deletedCard.createdBy, {
+      $pull: { cards: deletedCard._id }
+    });
+
+    PusherInit.trigger(CHANNEL_NAME, 'child_deleted', {
+      message: 'Card Deleted',  
+    });
 
     res.status(204).json({
       status: 'success',
+      message: 'Card successfully deleted!',
       data: {}
     })
   } catch (error) {

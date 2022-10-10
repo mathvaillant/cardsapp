@@ -1,0 +1,28 @@
+@import '../../styles/variables.scss';
+
+.CardItem {
+    &.openOnSidebar {
+        transform: rotate3d(1, 1, 1, -5deg);
+    }
+
+    .CardItem__title {
+        font-family: $altFont1;
+    }
+
+    .CardItem__desc {
+        display: block;
+        display: -webkit-box;
+        max-width: 400px;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .MuiCardContent-root {
+        background-color: white;
+        margin: 16px;
+        border-radius: 12px;
+        box-shadow: $MuiElevation6;
+    }
+}
