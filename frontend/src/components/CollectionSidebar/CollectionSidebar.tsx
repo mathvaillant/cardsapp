@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import CardsServices from "../../services/cardsServices";
 import CustomSidebar from "../CustomSidebar";
-import { getStateCard } from "../../selectors/cards";
-import { getStateAllCollections } from "../../selectors/collections";
+import CollectionServices from "../../services/collectionsServices";
+import { ICard } from "../../slices/cardsSlice";
+import { getStateAllCards } from "../../selectors/cards";
+import { getStateCollection } from "../../selectors/collections";
 import { useLocation } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
 import useDebounceCallback from "../../hooks/useDebounceCallback";
@@ -14,64 +16,51 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import { Button } from "@mui/material";
 import { toastr } from "react-redux-toastr";
-import './CardSidebar.scss';
+import './CollectionSidebar.scss';
 
-const CardSidebar = () => {
+const CollectionSidebar = () => {
   const location = useLocation();
-  const { cardId } = location.state;
+  const { collectionId } = location.state;
 
-  const stateCard = useAppSelector(getStateCard(cardId));
-  const stateCollections = useAppSelector(getStateAllCollections);
+  const stateCollection = useAppSelector(getStateCollection(collectionId));
+  const stateCards = useAppSelector(getStateAllCards);
+
+  const cardsInCollection = stateCards.filter(c => c.collectionId === collectionId);
 
   const [savingChanges, setSavingChanges] = useState(false);
-  const [name, setName] = useState(stateCard?.name);
-  const [description, setDescription] = useState(stateCard?.description);
-  const [value, setValue] = useState(stateCard?.value);
-  const [collectionId, setCollectionId] = useState(stateCard?.collectionId);
-
-  const handleChangeDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSavingChanges(true);
-    setDescription(e.target.value);
-  };
+  const [name, setName] = useState(stateCollection?.name);
+  const [cards, setCards] = useState(cardsInCollection);
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSavingChanges(true);
     setName(e.target.value);
   };
 
-  const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUpdateCards = (e: React.SyntheticEvent<Element, Event>, value: any) => {
     setSavingChanges(true);
-    setValue(parseInt(e.target.value) || 0);
-  };
-
-  const handleChangeCollectionId = (e: React.SyntheticEvent<Element, Event>, value: any) => {
-    setSavingChanges(true);
-    setCollectionId(value);
+    setCards(value);
   };
 
   const handleSaveChanges = async (): Promise<void> => {
-    await CardsServices.updateCard(cardId, {
-      name, 
-      value, 
-      collectionId, 
-      description
-    });
-
+    await CollectionServices.updateCollection(collectionId, name);
+    
+    const cardsIds = cards.map((card: ICard) => card._id);
+    await CardsServices.updateMultiple(cardsIds, collectionId);
     setSavingChanges(false);
   };
 
   useDebounceCallback(
     handleSaveChanges, 
     1000, 
-    [name, description, value, collectionId]
+    [name, cards, collectionId]
   );
 
-  const handleDeleteCard = () => {
-    toastr.confirm('Are you sure you want to delete this card?', {
+  const handleDeleteCollection = () => {
+    toastr.confirm('Are you sure you want to delete this collection? All cards will still exist', {
       onOk: async () => {
         try {
-          await CardsServices.deleteCard(cardId);
-          toastr.success('Card successfully deleted', '');
+          await CollectionServices.deleteCollection(collectionId);
+          toastr.success('Collection successfully deleted', '');
         } catch (error) {
           toastr.error('Something went wrong', '');
         }
@@ -82,7 +71,7 @@ const CardSidebar = () => {
   return (
     <CustomSidebar>
       <Box
-        className='CardSidebar'
+        className='CollectionSidebar'
         component="form"
         sx={{
           display: 'flex',
@@ -93,7 +82,7 @@ const CardSidebar = () => {
         <Box
           sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
         >
-          <Typography variant="h4">Edit Card</Typography>
+          <Typography variant="h4">Edit Collection</Typography>
           <LoadingButton
             className='LoadingButton'
             disabled={true}
@@ -118,46 +107,27 @@ const CardSidebar = () => {
             fullWidth
             variant="outlined"
           />
-          <TextField
-            id='value'
-            onChange={handleChangeValue}
-            value={value}
-            size="small"
-            label="Value"
-            type="number"
-            fullWidth variant="outlined"
-          />
-          <TextField
-            id='description'
-            onChange={handleChangeDescription}
-            value={description}
-            multiline={true}
-            rows={10}
-            size="small"
-            label="Description"
-            type="text"
-            fullWidth variant="filled"
-          />
           <Autocomplete
-            onChange={handleChangeCollectionId}
+            onChange={handleUpdateCards}
+            multiple
             size="small"
-            id="collection"
-            value={stateCollections.find(c => c._id === collectionId)}
-            options={stateCollections}
+            id="Cards"
+            value={cards}
             filterSelectedOptions
+            options={stateCards}
             getOptionLabel={(option) => option.name}
             renderInput={(params) => (
               <TextField
                 {...params}
                 variant="outlined"
-                label="Collection"
-                placeholder="Search for a collection"
+                label="Cards"
+                placeholder="Search for a card"
               />
             )}
           />
           <Button
             size="small"
-            onClick={handleDeleteCard}
+            onClick={handleDeleteCollection}
             variant="outlined"
             sx={{ display: 'block', width: 'max-content', m: 'auto' }}
           >
@@ -168,4 +138,4 @@ const CardSidebar = () => {
   )
 }
 
-export default CardSidebar;
+export default CollectionSidebar;

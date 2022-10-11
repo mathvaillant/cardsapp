@@ -6,7 +6,7 @@ exports.getSingleCard = async (req, res, next) => {
 
     res.status(200).json({
       status: 'success',
-      data: { card }
+      data: card
     })
   } catch (error) {
     next(error);

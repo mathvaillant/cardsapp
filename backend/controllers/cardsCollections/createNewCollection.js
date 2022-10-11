@@ -46,7 +46,7 @@ exports.createNewCollection = async (req, res, next) => {
     return res.status(201).json({
       status: 'success',
       message: 'Collection successfully added!',
-      data: { newCollection }
+      data: newCollection
     })
 
   } catch (error) {

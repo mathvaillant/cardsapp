@@ -19,7 +19,7 @@ exports.updateCollection = async (req, res, next) => {
     res.status(200).json({
       status: 'success',
       message: 'Collection updated successfully!',
-      data: { collection }
+      data: collection
     })
   } catch (error) {
     next(error);

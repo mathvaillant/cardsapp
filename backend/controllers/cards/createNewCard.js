@@ -50,7 +50,7 @@ exports.createNewCard = async (req, res, next) => {
     res.status(201).json({
       status: 'success',
       message: 'Card successfully added!',
-      data: { newCard }
+      data: newCard
     })
 
   } catch (error) {

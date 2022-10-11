@@ -24,7 +24,7 @@ exports.updateCard = async (req, res, next) => {
     res.status(200).json({
       status: 'success',
       message: 'Card successfully updated!',
-      data: { card }
+      data: card
     })
   } catch (error) {
     next(error);

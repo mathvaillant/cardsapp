@@ -18,12 +18,8 @@ const initialState: ICard[] = [];
 export const getAllCards = createAsyncThunk(
   'cards/getAllCards',
   async () => {
-    try {
-      const response = await CardsServices.getAllCards();
-      return response;
-    } catch (error) {
-      console.log("🚀 ~ file: cardsSlice.ts ~ line 24 ~ error", error)
-    }
+    const response = await CardsServices.getAllCards();
+    return response.data;
   }
 )
 
@@ -34,7 +30,7 @@ const cardsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getAllCards.fulfilled, (state, action) => {
-        return action.payload.cards;
+        return action.payload;
       })
   }
 })

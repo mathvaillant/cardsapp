@@ -6,8 +6,9 @@ exports.getAllCards = async (req, res, next) => {
 
     res.status(200).json({
       status: 'success',
-      results: cards.length,
-      data: { cards }
+      message: 'Cards successfully retrieved',
+      results: cards.length, 
+      data: cards
     })
   } catch (error) {
     next(error);

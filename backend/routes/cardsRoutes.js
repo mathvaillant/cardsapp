@@ -7,6 +7,7 @@ const { createNewCard } = require("../controllers/cards/createNewCard");
 const { getAllCards } = require("../controllers/cards/getAllCards");
 const { getSingleCard } = require("../controllers/cards/getSingleCard");
 const { updateCard } = require("../controllers/cards/updateCard");
+const { updateMultipleCards } = require("../controllers/cards/updateMultipleCards");
 const { deleteCard } = require("../controllers/cards/deleteCard");
 
 router
@@ -14,6 +15,10 @@ router
   .all(protect)
   .get(getAllCards)
   .post(createNewCard)
+
+router
+  .route('/updateMultiple')
+  .post(protect, updateMultipleCards)
 
 router
   .route('/:id')

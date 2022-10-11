@@ -11,11 +11,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 import CardsServices from "../services/cardsServices";
 
 interface Props {
-  newCardModalOpen: boolean
-  handleCloseNewCardModal: () => void
+  modalOpen: boolean
+  handleClose: () => void
 }
 
-const NewCardModal: React.FC<Props> = ({ newCardModalOpen, handleCloseNewCardModal }) => {
+const NewCardModal: React.FC<Props> = ({ modalOpen, handleClose }) => {
   const stateCollections = useAppSelector(state => state?.collections);
   const [data, setData] = React.useState({
     name: '',
@@ -39,20 +39,25 @@ const NewCardModal: React.FC<Props> = ({ newCardModalOpen, handleCloseNewCardMod
     })
   }
 
-  const handleCreateNewCard = async () => {
+  const handleCreate = async () => {
     if(!data.name || !data.description || !data.value) {
       toastr.error('Missing properties', 'Please, provide a name, value and a description to create the card.');
       return;
     }
 
-    await CardsServices.createNewCard(data);
+    const { status, message, data: newCard } = await CardsServices.createNewCard(data);
 
-    toastr.success('New card created', `Card ${data.name} has been created!`);
-    handleCloseNewCardModal();
+    if(!newCard) {
+      toastr.error(status, message);
+      return;
+    }
+
+    toastr.success(status, message);
+    handleClose();
   };
 
   return (
-    <Dialog open={newCardModalOpen} onClose={handleCloseNewCardModal} fullWidth>
+    <Dialog open={modalOpen} onClose={handleClose} fullWidth>
       <DialogTitle>Add New Card</DialogTitle>
       <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 4, mt: 2 }}>
         <TextField
@@ -91,6 +96,7 @@ const NewCardModal: React.FC<Props> = ({ newCardModalOpen, handleCloseNewCardMod
           size="small"
           id="collection"
           options={stateCollections}
+          filterSelectedOptions
           getOptionLabel={(option) => option.name}
           renderInput={(params) => (
             <TextField
@@ -102,9 +108,9 @@ const NewCardModal: React.FC<Props> = ({ newCardModalOpen, handleCloseNewCardMod
           )}
         />
       </DialogContent>
-      <DialogActions>
-        <Button variant="outlined" onClick={handleCloseNewCardModal}>Cancel</Button>
-        <Button variant="contained" onClick={handleCreateNewCard}>Save</Button>
+      <DialogActions sx={{ p: 2 }}>
+        <Button size="small" variant="outlined" onClick={handleClose}>Cancel</Button>
+        <Button size="small" variant="contained" onClick={handleCreate}>Create New</Button>
       </DialogActions>
     </Dialog>
   );

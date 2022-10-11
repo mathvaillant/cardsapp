@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import ReduxToastr from 'react-redux-toastr';
 import { BrowserRouter as Router, Route} from "react-router-dom"
 import { Routes } from 'react-router';
@@ -13,6 +12,7 @@ import Collections from "./pages/Collections/Collections";
 import AppOn from "./AppOn";
 import CardSidebar from "./components/CardSidebar/CardSidebar";
 import './App.scss';
+import CollectionSidebar from "./components/CollectionSidebar/CollectionSidebar";
 
 const theme = createTheme({
   palette: {
@@ -48,7 +48,9 @@ function App() {
               <Route path="cards" element={<Cards/>}>
                 <Route path=':id' element={<CardSidebar />} />
               </Route>
-              <Route path="collections" element={<Collections/>}/>
+              <Route path="collections" element={<Collections/>}>
+                <Route path=':id' element={<CollectionSidebar />} />
+              </Route>
               <Route path="users" element={<Users/>}/>
             </Route>
             <Route path="login" element={<Login/>}/>

@@ -1,37 +1,87 @@
 import axios from 'axios';
 import { getToken, mapAuthBearerToken } from "./utils";
 import { API_URL } from "./constants";
+import { APIResponse, ResponseError } from "../utils/shared/types";
+import { ICard } from "../slices/cardsSlice";
+import { mapErrorResponse } from "../utils/utils";
 
-type RequestData = {
-  name?: string
-  value?: number
-  description?: string
-  collectionId?: string
+interface RequestData {
+  name?: string | undefined
+  value?: number | undefined
+  description?: string | undefined
+  collectionId?: string | undefined
 }
 
-const getAllCards = async () => {
-  const token = getToken();
-  const { data } = await axios.get(`${API_URL}/cards`, mapAuthBearerToken(token));
-
-  return data.data;
+interface ResponseCreateSuccess extends APIResponse {
+  data: ICard;
 }
 
-const createNewCard = async (cardData: RequestData) => {
-  const token = getToken();
-  const { data } = await axios.post(`${API_URL}/cards`, cardData, mapAuthBearerToken(token));
-
-  return data.data;
+interface ResponseUpdateSuccess extends ResponseCreateSuccess {}
+interface ResponseUpdateMultipleSuccess extends APIResponse {
+  data: {},
 }
 
-const deleteCard = async (cardId: string) => {
+interface ResponseDeleteSuccess extends APIResponse {
+  data: {};
+}
+
+interface ResponseGetAllSuccess extends APIResponse {
+  data: ICard[]
+  results: number
+}
+
+const getAllCards = async (): Promise<ResponseGetAllSuccess | ResponseError> => {
+  try {
+    const token = getToken();
+    const { data } = await axios.get(`${API_URL}/cards`, mapAuthBearerToken(token));
+    return data;
+  } catch (error) {
+    return mapErrorResponse(error);    
+  }
+}
+
+const createNewCard = async (cardData: RequestData): Promise<ResponseCreateSuccess | ResponseError> => {
+  try {
+    const token = getToken();
+    const { data } = await axios.post(`${API_URL}/cards`, cardData, mapAuthBearerToken(token));
+    return data;
+  } catch (error) {
+    return mapErrorResponse(error);
+  }
+}
+
+const deleteCard = async (cardId: string): Promise<ResponseDeleteSuccess | ResponseError> => {
   const token = getToken();
-  const { data } = await axios.delete(`${API_URL}/cards/${cardId}`, mapAuthBearerToken(token));
+  try {
+    const { data } = await axios.delete(`${API_URL}/cards/${cardId}`, mapAuthBearerToken(token));
+    return data;
+  } catch (error) {
+    return mapErrorResponse(error);
+  }
+}
+
+const updateCard = async (cardId: string, dataToUpdate: RequestData): Promise<
+ResponseUpdateSuccess | ResponseError
+> => {
+  try {
+    const token = getToken();
+    const { data } = await axios.patch(`${API_URL}/cards/${cardId}`, dataToUpdate, mapAuthBearerToken(token));
+    return data;
+  } catch (error) {
+    return mapErrorResponse(error);
+  }
+}
+
+const updateMultiple = async (cardsIds: string[], collectionId: string): Promise<
+  ResponseUpdateMultipleSuccess | ResponseError
+>  => {
+  const token = getToken();
+  const { data } = await axios.post(`${API_URL}/cards/updateMultiple`, {
+    cardsIds,
+    collectionId
+  }, mapAuthBearerToken(token));
+
   return data;
-}
-
-const updateCard = async (cardId: string, dataToUpdate: RequestData) => {
-  const token = getToken();
-  return await axios.patch(`${API_URL}/cards/${cardId}`, dataToUpdate, mapAuthBearerToken(token));
 }
 
 const CardsServices = {
@@ -39,6 +89,7 @@ const CardsServices = {
   deleteCard,
   updateCard,
   createNewCard,
+  updateMultiple,
 }
 
 export default CardsServices;

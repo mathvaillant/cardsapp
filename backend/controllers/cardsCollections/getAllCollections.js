@@ -6,8 +6,9 @@ exports.getAllCollections = async (req, res, next) => {
 
     res.status(200).json({
       status: 'success',
+      message: 'Collections successfully retrieved',
       results: collections.length,
-      data: { collections }
+      data: collections
     })
   } catch (error) {
     next(error);
