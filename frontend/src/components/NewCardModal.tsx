@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useAppSelector } from "../../../app/hooks";
+import { useAppSelector } from "../app/hooks";
 import { toastr } from 'react-redux-toastr';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -8,7 +8,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import CardsServices from "../../../services/cardsServices";
+import CardsServices from "../services/cardsServices";
 
 interface Props {
   newCardModalOpen: boolean
@@ -39,9 +39,13 @@ const NewCardModal: React.FC<Props> = ({ newCardModalOpen, handleCloseNewCardMod
     })
   }
 
-  const handleSaveChanges = async () => {
+  const handleCreateNewCard = async () => {
+    if(!data.name || !data.description || !data.value) {
+      toastr.error('Missing properties', 'Please, provide a name, value and a description to create the card.');
+      return;
+    }
+
     await CardsServices.createNewCard(data);
-    // Update the card collection array of cards as well
 
     toastr.success('New card created', `Card ${data.name} has been created!`);
     handleCloseNewCardModal();
@@ -100,7 +104,7 @@ const NewCardModal: React.FC<Props> = ({ newCardModalOpen, handleCloseNewCardMod
       </DialogContent>
       <DialogActions>
         <Button variant="outlined" onClick={handleCloseNewCardModal}>Cancel</Button>
-        <Button variant="contained" onClick={handleSaveChanges}>Save</Button>
+        <Button variant="contained" onClick={handleCreateNewCard}>Save</Button>
       </DialogActions>
     </Dialog>
   );

@@ -5,8 +5,8 @@ import AuthServices from "../services/authServices";
 const user = JSON.parse(localStorage.getItem('user') as string);
 
 const initialState = user
- ? { isLoggedIn: true, user }
- : { isLoggedIn: false, user: null };
+ ? { isLoggedIn: true, user, error: '' }
+ : { isLoggedIn: false, user: null, error: '' };
 
 export const signUp = createAsyncThunk(
   'auth/signup',
@@ -14,8 +14,9 @@ export const signUp = createAsyncThunk(
     try {
       const response = await AuthServices.signUp(name, username, password);
       return response;
-    } catch (error) {
-      console.log("🚀 ~ file: signupActions.ts ~ line 14 ~ error", error);
+    } catch (error: any) {
+      const errorMessage = error.response.data.message;
+      throw new Error(errorMessage);
     }
   }
 )
@@ -26,8 +27,9 @@ export const login = createAsyncThunk(
     try {
       const response = await AuthServices.login(username, password);
       return response;
-    } catch (error) {
-      console.log("🚀 ~ file: signupActions.ts ~ line 14 ~ error", error);
+    } catch (error: any) {
+      const errorMessage = error.response.data.message;
+      throw new Error(errorMessage);
     }
   }
 )
@@ -43,10 +45,18 @@ const authSlice = createSlice({
       .addCase(signUp.fulfilled, (state, action) => {
         state.isLoggedIn = true;
         state.user = action.payload.data.user;
+        state.error = '';
+      })
+      .addCase(signUp.rejected, (state, action) => {
+        state.error = action.error.message as string;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.isLoggedIn = true;
         state.user = action.payload.data.user;
+        state.error = '';
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.error = action.error.message as string;
       })
       .addCase(logout.fulfilled, (state) => {
         state.isLoggedIn = false;

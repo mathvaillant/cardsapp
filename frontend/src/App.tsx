@@ -11,9 +11,8 @@ import Users from "./pages/Users/Users";
 import Cards from "./pages/Cards/Cards";
 import Collections from "./pages/Collections/Collections";
 import AppOn from "./AppOn";
+import CardSidebar from "./components/CardSidebar/CardSidebar";
 import './App.scss';
-import CardItem from "./components/CardItem/CardItem";
-import CardSidebar from "./pages/Cards/components/CardSidebar";
 
 const theme = createTheme({
   palette: {
@@ -26,6 +25,9 @@ const theme = createTheme({
     secondary: {
       main: '#FFFFFF',
     },
+    success: {
+      main: '#11823b'
+    }
   },
   spacing: 8,
   shape: {

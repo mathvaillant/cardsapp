@@ -4,15 +4,15 @@ import { useAppSelector } from '../../app/hooks';
 import { useNavigate } from 'react-router';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import CardItem from "../../components/CardItem/CardItem";
-import useDebounce from "../../hooks/useDebounce";
-import NewCardModal from "./components/NewCardModal";
+import useDebounceValue from "../../hooks/useDebounceValue";
+import NewCardModal from "../../components/NewCardModal";
 import SearchInput from "../../components/SearchInput";
 import BackButton from "../../components/BackButton";
 import { Typography } from "@mui/material";
+import './Cards.scss';
 
 const Cards = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const Cards = () => {
 
   const handleGoBack = () => navigate('/home');
 
-  const debouncedFilterValue = useDebounce(filterValue, 750);
+  const debouncedFilterValue = useDebounceValue(filterValue, 750);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => setFilterValue(e.target.value);
 
@@ -41,14 +41,15 @@ const Cards = () => {
     <>
       <div className="Cards">
         <Box
-          sx={ {
+          sx={{
             display: 'flex',
             alignItems: 'center',
             flexDirection: 'column',
             px: 4,
+            pb: 5,
             mt: 2,
             gap: 4
-          } }
+          }}
         >
           <BackButton onClick={handleGoBack}/>
           <Button
@@ -60,13 +61,20 @@ const Cards = () => {
             Add New Card
           </Button>
           <SearchInput value={ filterValue } onSearch={ handleSearch } />
-          <Container sx={ { display: 'flex', gap: 4, flexWrap: 'wrap', justifyContent: 'center' } } maxWidth="lg">
+          <Container
+            maxWidth="lg"
+            sx={{ 
+              display: 'flex', 
+              gap: 4,
+              flexWrap: 'wrap',
+              justifyContent: 'center'
+            }} 
+          >
             { cardsToShow.length ? cardsToShow.map((card, index) => {
               return (
                 <CardItem 
                   key={ `${card.name}-${index}` }
                   card={ card } 
-                  index={ index } 
                 />
               );
             }) : <Typography variant="h6">No cards to show</Typography> }

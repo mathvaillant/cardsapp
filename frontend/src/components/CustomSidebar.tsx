@@ -28,7 +28,7 @@ const CustomSidebar = ({ children } : { children: JSX.Element }) => {
       open={isOpen}
       onClose={handleClose}
     >
-      <Box sx={{ width: 600 }} role="presentation">
+      <Box sx={{ width: 600, p: 8 }} role="presentation">
         {children}
       </Box>
     </Drawer>

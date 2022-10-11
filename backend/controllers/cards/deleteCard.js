@@ -17,7 +17,6 @@ exports.deleteCard = async (req, res, next) => {
 
     res.status(204).json({
       status: 'success',
-      message: 'Card successfully deleted!',
       data: {}
     })
   } catch (error) {

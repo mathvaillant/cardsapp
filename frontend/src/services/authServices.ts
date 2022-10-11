@@ -20,7 +20,6 @@ const login = async (username: string, password: string) => {
     username,
     password
   })
-  console.log("🚀 ~ file: authServices.ts ~ line 23 ~ login ~ data", data)
 
   if(data.data.user) {
     localStorage.setItem('user', JSON.stringify(data.data.user));

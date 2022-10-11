@@ -16,7 +16,7 @@ import { signUp } from "../../slices/authSlice";
 const SignUp = () => {
   const dispatch = useAppDispatch();
   const navigator = useNavigate();
-  const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn);
+  const authState = useAppSelector(state => state.auth);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,11 +31,16 @@ const SignUp = () => {
   };
 
   React.useEffect(() => {
-    if(isLoggedIn) {
+    if(authState.error !== '') {
+      toastr.error(authState.error, '');
+      return;
+    }
+
+    if(authState.isLoggedIn) {
       toastr.success('Done!', 'Successfully signed up!');
       navigator('/home');
     }
-  }, [isLoggedIn, navigator]);
+  }, [authState, navigator]);
 
   return (
     <Container component="main" maxWidth="xs">

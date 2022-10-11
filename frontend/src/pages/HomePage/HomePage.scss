@@ -1,0 +1,45 @@
+.HomePage {
+	.option {
+		display: block;
+		position: relative;
+		max-width: 262px;
+		background-color: white;
+		border-radius: 4px;
+		padding: 32px 24px;
+		margin: 12px;
+		text-decoration: none;
+		z-index: 0;
+		overflow: hidden;
+
+		&:before {
+			content: '';
+			position: absolute;
+			z-index: -1;
+			top: -16px;
+			right: -16px;
+			background: linear-gradient(
+				109.6deg,
+				rgba(0, 0, 0, 0.93) 11.2%,
+				rgb(63, 61, 61) 78.9%
+			);
+			height: 32px;
+			width: 32px;
+			border-radius: 32px;
+			transform: scale(1);
+			transform-origin: 50% 50%;
+			transition: transform 0.25s ease-out;
+		}
+
+		&:hover:before {
+			transform: scale(21);
+		}
+
+		&:hover {
+			color: white;
+
+			p {
+				color: white;
+			}
+		}
+	}
+}

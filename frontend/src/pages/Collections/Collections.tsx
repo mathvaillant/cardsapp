@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
-import useDebounce from "../../hooks/useDebounce";
+import useDebounceValue from "../../hooks/useDebounceValue";
 import SearchInput from "../../components/SearchInput";
 import BackButton from "../../components/BackButton";
 import CollectionItem from "./components/CollectionItem";
@@ -18,7 +18,7 @@ const Collections = () => {
 
   const handleGoBack = () => navigate('/home');
 
-  const debouncedFilterValue = useDebounce(filterValue, 750);
+  const debouncedFilterValue = useDebounceValue(filterValue, 750);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => setFilterValue(e.target.value);
 

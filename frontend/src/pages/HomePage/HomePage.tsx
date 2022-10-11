@@ -4,10 +4,10 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Box from '@mui/material/Box';
 import { CardActionArea } from '@mui/material';
 import { useAppSelector } from "../../app/hooks";
+import './HomePage.scss';
 
 const HomePage = () => {
   const navigator = useNavigate();
@@ -19,7 +19,8 @@ const HomePage = () => {
   };
 
   return (
-    <Box
+    <Box 
+      className="HomePage"
       sx={{
         bgcolor: 'background.paper',
         pt: 8,
@@ -38,14 +39,8 @@ const HomePage = () => {
         </Typography>
 
         <Container sx={{ py: 8, display: 'flex', gap: 4 }} maxWidth="lg">
-          <Card sx={{ width: 400 }}>
+          <Card elevation={6} sx={{ width: 400 }} className='option'>
             <CardActionArea onClick={(e) => handleGoTo(e, '/cards')}>
-              <CardMedia
-                component="img"
-                height="250"
-                src="https://lirp.cdn-website.com/75294010/dms3rep/multi/opt/CARDS-c730032c-1920w.jpg"
-                alt="cards"
-              />
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                   Cards
@@ -56,14 +51,8 @@ const HomePage = () => {
               </CardContent>
             </CardActionArea>
           </Card>
-          <Card sx={{ width: 400 }}>
+          <Card elevation={6} sx={{ width: 400 }} className='option'>
             <CardActionArea onClick={(e) => handleGoTo(e, '/collections')}>
-              <CardMedia
-                component="img"
-                height="250"
-                src="https://m.media-amazon.com/images/I/51iiEcs7FkL._AC_SY580_.jpg"
-                alt="collections"
-              />
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                   Collections
