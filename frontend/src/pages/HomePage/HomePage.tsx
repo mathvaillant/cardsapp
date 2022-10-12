@@ -8,10 +8,14 @@ import Box from '@mui/material/Box';
 import { CardActionArea } from '@mui/material';
 import { useAppSelector } from "../../app/hooks";
 import './HomePage.scss';
+import { getStateUserIsAdmin, getStateUserUsername } from "../../selectors/users";
+
+const mainPages = ['cards', 'collections', 'users'];
 
 const HomePage = () => {
   const navigator = useNavigate();
-  const username = useAppSelector(state => state?.auth?.user?.username)
+  const username = useAppSelector(getStateUserUsername);
+  const isAdmin = useAppSelector(getStateUserIsAdmin);
 
   const handleGoTo = (e: React.MouseEvent<HTMLElement>, path: string) => {
     e.preventDefault();
@@ -27,7 +31,7 @@ const HomePage = () => {
         pb: 6,
       }}
     >
-      <Container maxWidth="sm">
+      <Container maxWidth="lg">
         <Typography
           component="h1"
           variant="h4"
@@ -38,31 +42,34 @@ const HomePage = () => {
           Welcome back, {username}!
         </Typography>
 
-        <Container sx={{ py: 8, display: 'flex', gap: 4 }} maxWidth="lg">
-          <Card elevation={6} sx={{ width: 400 }} className='option'>
-            <CardActionArea onClick={(e) => handleGoTo(e, '/cards')}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  Cards
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  All of your cards
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-          </Card>
-          <Card elevation={6} sx={{ width: 400 }} className='option'>
-            <CardActionArea onClick={(e) => handleGoTo(e, '/collections')}>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  Collections
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  All of your collections of cards
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-          </Card>
+        <Container 
+          sx={{ 
+            py: 8, 
+            display: 'flex', 
+            gap: 2,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }} 
+          maxWidth="lg"
+        >
+          {mainPages.map((page: string) => {
+            if(!isAdmin && page === 'users') return null;
+
+            return (
+              <Card elevation={6} sx={{ width: 'auto' }} className='option'>
+                <CardActionArea onClick={(e) => handleGoTo(e, `/${page}`)}>
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      {page.toUpperCase()}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      All {page.toUpperCase()}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            )
+          })}
         </Container>
       </Container>
     </Box>

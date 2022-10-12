@@ -13,6 +13,7 @@ import AppOn from "./AppOn";
 import CardSidebar from "./components/CardSidebar/CardSidebar";
 import './App.scss';
 import CollectionSidebar from "./components/CollectionSidebar/CollectionSidebar";
+import AdminRoute from "./app/AdminRoute";
 
 const theme = createTheme({
   palette: {
@@ -51,7 +52,9 @@ function App() {
               <Route path="collections" element={<Collections/>}>
                 <Route path=':id' element={<CollectionSidebar />} />
               </Route>
-              <Route path="users" element={<Users/>}/>
+              <Route path='/' element={<AdminRoute />}>
+                <Route path='/users' element={<Users/>} />
+              </Route>
             </Route>
             <Route path="login" element={<Login/>}/>
             <Route path="signup" element={<SignUp/>}/>

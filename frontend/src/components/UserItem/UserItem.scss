@@ -1,0 +1,24 @@
+@import '../../styles/variables.scss';
+
+.UserItem {
+	.UserItem__title {
+		font-family: $altFont1;
+	}
+
+	.UserItem__desc {
+		display: block;
+		display: -webkit-box;
+		max-width: 400px;
+		-webkit-line-clamp: 4;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.MuiCardContent-root {
+		background-color: white;
+		margin: 16px;
+		border-radius: 12px;
+		box-shadow: $MuiElevation6;
+	}
+}

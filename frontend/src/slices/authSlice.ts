@@ -4,7 +4,23 @@ import AuthServices from "../services/authServices";
 
 const user = JSON.parse(localStorage.getItem('user') as string);
 
-const initialState = user
+export interface IUser {
+  token: string
+  _id: string
+  name: string
+  username: string
+  role: string
+  cards: string[]
+  collections: string[]
+}
+
+interface IAuth {
+  isLoggedIn: boolean
+  user: IUser | null | undefined
+  error: string
+}
+
+const initialState: IAuth = user
  ? { isLoggedIn: true, user, error: '' }
  : { isLoggedIn: false, user: null, error: '' };
 
@@ -44,7 +60,7 @@ const authSlice = createSlice({
     builder
       .addCase(signUp.fulfilled, (state, action) => {
         state.isLoggedIn = true;
-        state.user = action.payload.data.user;
+        state.user = action.payload.data;
         state.error = '';
       })
       .addCase(signUp.rejected, (state, action) => {
@@ -52,7 +68,7 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.isLoggedIn = true;
-        state.user = action.payload.data.user;
+        state.user = action.payload?.data;
         state.error = '';
       })
       .addCase(login.rejected, (state, action) => {

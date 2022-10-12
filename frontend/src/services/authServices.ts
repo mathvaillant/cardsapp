@@ -1,28 +1,34 @@
 import axios from 'axios';
+import { IUser } from "../slices/authSlice";
+import { APIResponse, ResponseError } from "../utils/shared/types";
 import { API_URL } from "./constants";
 
-const signUp = async (name: string, username: string, password: string) => {
+interface ResponseAuthSuccess extends APIResponse {
+  data: IUser;
+}
+
+const signUp = async (name: string, username: string, password: string): Promise<ResponseAuthSuccess | ResponseError> => {
   const { data } = await axios.post(`${API_URL}/users/signup`, {
     name,
     username,
     password
-  })
+  });
 
-  if(data.data.user) {
-    localStorage.setItem('user', JSON.stringify(data.data.user));
+  if(data.data.token) {
+    localStorage.setItem('user', JSON.stringify(data.data));
   }
 
   return data;
 };
 
-const login = async (username: string, password: string) => {
+const login = async (username: string, password: string): Promise<ResponseAuthSuccess | ResponseError> => {
   const { data } = await axios.post(`${API_URL}/users/login`, {
     username,
     password
-  })
+  });
 
-  if(data.data.user) {
-    localStorage.setItem('user', JSON.stringify(data.data.user));
+  if(data.data.token) {
+    localStorage.setItem('user', JSON.stringify(data.data));
   }
 
   return data;
