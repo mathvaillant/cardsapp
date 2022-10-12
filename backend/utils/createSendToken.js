@@ -5,7 +5,7 @@ exports.createSendToken = (user, statusCode, res) => {
 
   const userData = {
     token,
-    id: user.id,
+    _id: user.id,
     name: user.name,
     username: user.username,
     role: user.role,

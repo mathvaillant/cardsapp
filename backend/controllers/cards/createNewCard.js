@@ -44,7 +44,7 @@ exports.createNewCard = async (req, res, next) => {
 
     PusherInit.trigger(CHANNEL_NAME, 'child_added', {
       message: 'New card added',
-      collectionId: newCard._id,  
+      cardId: newCard._id,  
     });
 
     res.status(201).json({
