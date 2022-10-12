@@ -74,6 +74,7 @@ const EditUserModal: React.FC<Props> = ({ modalOpen, handleClose, user, isEditin
       const currentUserData = JSON.parse(localStorage.getItem('user') as string);
       localStorage.setItem('user', JSON.stringify({
         ...userUpdated,
+        role: currentUserData.role,
         token: currentUserData.token,
       }));
     }

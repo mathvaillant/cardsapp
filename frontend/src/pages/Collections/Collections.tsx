@@ -47,6 +47,7 @@ const Collections = () => {
 						alignItems: 'center',
 						flexDirection: 'column',
 						px: 4,
+						pb: 4,
 						mt: 2,
 						gap: 4,
 					}}>

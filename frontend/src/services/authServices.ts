@@ -36,6 +36,7 @@ const login = async (username: string, password: string): Promise<ResponseAuthSu
 
 const logout = () => {
   localStorage.removeItem('user');
+  window.location.reload();
 }
 
 const AuthServices = {

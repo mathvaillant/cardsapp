@@ -5,7 +5,7 @@ import CollectionServices from "../../services/collectionsServices";
 import { ICard } from "../../slices/cardsSlice";
 import { getStateAllCards } from "../../selectors/cards";
 import { getStateCollection } from "../../selectors/collections";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
 import useDebounceCallback from "../../hooks/useDebounceCallback";
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -20,6 +20,7 @@ import './CollectionSidebar.scss';
 
 const CollectionSidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { collectionId } = location.state;
 
   const stateCollection = useAppSelector(getStateCollection(collectionId));
@@ -60,6 +61,7 @@ const CollectionSidebar = () => {
       onOk: async () => {
         try {
           await CollectionServices.deleteCollection(collectionId);
+          navigate('/collections');
           toastr.success('Collection successfully deleted', '');
         } catch (error) {
           toastr.error('Something went wrong', '');
@@ -113,8 +115,9 @@ const CollectionSidebar = () => {
             size="small"
             id="Cards"
             value={cards}
+            isOptionEqualToValue={(option, value) => value._id === option._id}
             filterSelectedOptions
-            options={stateCards}
+            options={stateCards.filter(c => c.createdBy === stateCollection?.createdBy)}
             getOptionLabel={(option) => option.name}
             renderInput={(params) => (
               <TextField

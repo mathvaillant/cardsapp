@@ -7,6 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import { ICard } from '../../slices/cardsSlice';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './CardItem.scss';
+import OwnerShipLabel from "../OwnerLabel";
 
 interface Props {
 	card: ICard;
@@ -15,7 +16,7 @@ interface Props {
 const CardItem: React.FC<Props> = ({ card }) => {
 	const navigator = useNavigate();
 	const location = useLocation();
-	const { _id, name, value, description, colors } = card;
+	const { _id, name, value, description, colors, createdBy } = card;
 
 	const handleOpenSidebar = () =>
 		navigator(`/cards/${_id}`, {
@@ -39,6 +40,7 @@ const CardItem: React.FC<Props> = ({ card }) => {
 					sx={{ height: '100%' }}>
 					<CardContent
 						sx={{
+							height: 200,
 							display: 'flex',
 							flexDirection: 'column',
 						}}>
@@ -64,6 +66,7 @@ const CardItem: React.FC<Props> = ({ card }) => {
 							{description}
 						</Typography>
 					</CardContent>
+					<OwnerShipLabel createdBy={createdBy} />
 				</CardActionArea>
 			</Card>
 		</Tooltip>

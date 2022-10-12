@@ -11,6 +11,7 @@ import { useAppSelector } from '../../app/hooks';
 import { getStateAllCards } from '../../selectors/cards';
 import { ICard } from '../../slices/cardsSlice';
 import './CollectionItem.scss';
+import OwnerShipLabel from "../OwnerLabel";
 
 interface Props {
 	collection: ICollection;
@@ -19,7 +20,7 @@ interface Props {
 
 const CollectionItem: React.FC<Props> = ({ collection }) => {
 	const navigator = useNavigate();
-	const { name, _id } = collection;
+	const { name, _id, createdBy } = collection;
 
 	const stateCards = useAppSelector(getStateAllCards);
 
@@ -63,6 +64,7 @@ const CollectionItem: React.FC<Props> = ({ collection }) => {
 					</Typography>
 				</CardContent>
 			</CardActionArea>
+			<OwnerShipLabel createdBy={createdBy} />
 		</Card>
 	);
 };

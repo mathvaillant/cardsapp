@@ -7,17 +7,14 @@ import useDebounceValue from '../../hooks/useDebounceValue';
 import SearchInput from '../../components/SearchInput';
 import BackButton from '../../components/BackButton';
 import { CircularProgress, Typography } from '@mui/material';
-import { IUser } from "../../slices/authSlice";
-import { toastr } from "react-redux-toastr";
-import UserServices from "../../services/userServices";
 import UserItem from "../../components/UserItem/UserItem";
-import { pusherInstance } from "../../pusher";
+import { useAppSelector } from "../../app/hooks";
+import { getStateUsers } from "../../selectors/users";
 
 const Users = () => {
 	const navigate = useNavigate();
-	const [isLoading, setIsLoading] = useState(false);
 	const [filterValue, setFilterValue] = useState('');
-  const [users, setUsers] = useState<IUser[]>([]);
+	const stateUsers = useAppSelector(getStateUsers);
 
 	const handleGoBack = () => navigate('/home');
 
@@ -26,34 +23,13 @@ const Users = () => {
 	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => setFilterValue(e.target.value);
 
 	const usersToShow = useMemo(() => {
-		return users.filter((user) => {
+		return stateUsers.filter((user) => {
 			const userName = user.name.toLowerCase().replaceAll(' ', '');
 			const userUserName = user.username.toLowerCase().replaceAll(' ', '');
 			const value = debouncedFilterValue.toLowerCase().replaceAll(' ', '');
 			return userName.match(value) || userUserName.match(value);
 		});
-	}, [users, debouncedFilterValue]);
-
-	const Users = React.useMemo(() => pusherInstance().subscribe('users'), []);
-
-	const handleGetUsers = React.useCallback(async () => {
-		setIsLoading(true);
-		const { status, data } = await UserServices.getAllUsers();
-
-		if(!data) {
-			toastr.error(status, 'Could not find any users');
-			return;
-		}
-
-		setUsers(data);
-		setIsLoading(false);
-	}, []);
-
-  useEffect(() => {
-    handleGetUsers();
-		Users.bind('child_updated', () => handleGetUsers());
-		Users.bind('child_deleted', () => handleGetUsers());
-  }, [Users, handleGetUsers]);
+	}, [stateUsers, debouncedFilterValue]);
 
 	return (
 		<>
@@ -78,9 +54,7 @@ const Users = () => {
 							flexWrap: 'wrap',
 							justifyContent: 'center',
 						}}>
-						{ isLoading ? (
-							<CircularProgress size={100} sx={{ mt: 5 }} />
-						) : usersToShow.length ? (
+						{ usersToShow.length ? (
 							usersToShow.map((user, index) => {
 								return (
 									<UserItem

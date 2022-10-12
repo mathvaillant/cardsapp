@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import CardsServices from "../../services/cardsServices";
 import CustomSidebar from "../CustomSidebar";
 import { getStateCard } from "../../selectors/cards";
 import { getStateAllCollections } from "../../selectors/collections";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
 import useDebounceCallback from "../../hooks/useDebounceCallback";
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -15,12 +15,14 @@ import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import { Button } from "@mui/material";
 import { toastr } from "react-redux-toastr";
 import './CardSidebar.scss';
-import { ICollection } from "../../slices/collectionsSlice";
+import { getStateUser } from "../../selectors/users";
 
 const CardSidebar = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const { cardId } = location.state;
 
+  const stateUserLoggedIn = useAppSelector(getStateUser);
   const stateCard = useAppSelector(getStateCard(cardId));
   const stateCollections = useAppSelector(getStateAllCollections);
 
@@ -73,6 +75,7 @@ const CardSidebar = () => {
         try {
           await CardsServices.deleteCard(cardId);
           toastr.success('Card successfully deleted', '');
+          navigate('/cards')
         } catch (error) {
           toastr.error('Something went wrong', '');
         }
@@ -80,7 +83,7 @@ const CardSidebar = () => {
     })
   };
 
-  const currentCollection = stateCollections.find(c => c._id === collectionId);
+  const currentCollection = stateCollections.find(col => col._id === collectionId);
 
   return (
     <CustomSidebar>
@@ -146,7 +149,7 @@ const CardSidebar = () => {
             size="small"
             id="collection"
             value={currentCollection}
-            options={stateCollections}
+            options={stateCollections.filter(c => c.createdBy === stateCard?.createdBy)}
             filterSelectedOptions
             getOptionLabel={(option) => option.name}
             renderInput={(params) => (
