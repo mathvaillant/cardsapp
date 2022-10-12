@@ -68,17 +68,14 @@ const CardSidebar = () => {
       description
     };
 
-    const noChangesMade = _.isEqual(
+    const cardUpdated = !_.isEqual(
       cardUpdates, 
       _.pick(stateCard, ['name', 'value', 'collectionId', 'description'])
     );
 
-    if(noChangesMade) {
-      setSavingChanges(false);
-      return;
+    if(cardUpdated) {
+      await CardsServices.updateCard(cardId, cardUpdates);
     };
-
-    await CardsServices.updateCard(cardId, cardUpdates);
 
     setSavingChanges(false);
   };
