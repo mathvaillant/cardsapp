@@ -23,7 +23,14 @@ exports.updateUser = async (req, res, next) => {
     res.status(200).json({
       status: 'success',
       message: isSelfUpdating ? 'Profile updated!' : 'User updated successfully!',
-      data: userUpdated
+      data: {
+        _id: userUpdated._id,
+        name: userUpdated.name,
+        username: userUpdated.username,
+        role: userUpdated.role,
+        cards: userUpdated.cards,
+        collections: userUpdated.collections,
+      }
     });
   } catch (error) {
    next(error); 

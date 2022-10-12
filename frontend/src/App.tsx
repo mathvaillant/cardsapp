@@ -14,29 +14,12 @@ import CardSidebar from "./components/CardSidebar/CardSidebar";
 import './App.scss';
 import CollectionSidebar from "./components/CollectionSidebar/CollectionSidebar";
 import AdminRoute from "./app/AdminRoute";
-
-const theme = createTheme({
-  palette: {
-    background: {
-      default: "#FFFFFF",
-    },
-    primary: {
-      main: '#000000',
-    },
-    secondary: {
-      main: '#FFFFFF',
-    },
-    success: {
-      main: '#11823b'
-    }
-  },
-  spacing: 8,
-  shape: {
-    borderRadius: 5,
-  },
-});
+import NotFound from "./pages/NotFound";
+import { useAppTheme } from "./hooks/useAppTheme";
 
 function App() {
+  const theme = useAppTheme();
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline/>
@@ -58,15 +41,17 @@ function App() {
             </Route>
             <Route path="login" element={<Login/>}/>
             <Route path="signup" element={<SignUp/>}/>
+
+            <Route path="*" element={<NotFound/>}/>
           </Routes>
         </Router>
       </div>
 
       <ReduxToastr
-        timeOut={30000}
+        timeOut={2000}
         preventDuplicates={true}
         newestOnTop={false}
-        position="bottom-center"
+        position="bottom-left"
         transitionIn="bounceIn"
         transitionOut="bounceOut"
         progressBar

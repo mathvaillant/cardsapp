@@ -24,6 +24,15 @@ const NewCardModal: React.FC<Props> = ({ modalOpen, handleClose }) => {
     collectionId: undefined,
   });
 
+  React.useEffect(() => {
+    setData({ 
+      name: '', 
+      value: 0, 
+      description: '', 
+      collectionId: undefined
+    });
+  }, [modalOpen]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const field = e.target.id;
     setData({

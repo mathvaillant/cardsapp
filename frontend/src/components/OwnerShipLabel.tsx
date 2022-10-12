@@ -1,10 +1,10 @@
 import { Button, Typography } from "@mui/material";
 import * as React from 'react';
 import { useAppSelector } from "../app/hooks";
-import { getStateUser, getStateUsers } from "../selectors/users";
+import { getStateLoggedUser, getStateUsers } from "../selectors/users";
 
 const OwnerShipLabel = ({ createdBy } : { createdBy: string }) => {
-  const stateUserLogged = useAppSelector(getStateUser);
+  const stateUserLogged = useAppSelector(getStateLoggedUser);
   const stateUsers = useAppSelector(getStateUsers);
 
   if(stateUserLogged?.role !== 'admin') return null;

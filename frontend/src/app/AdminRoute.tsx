@@ -1,23 +1,14 @@
 import React from 'react';
 import { useAppSelector } from "./hooks";
 import { getStateUserIsAdmin } from "../selectors/users";
-import { Outlet } from "react-router-dom";
-import { Container, Typography } from "@mui/material";
+import { Navigate, Outlet } from "react-router-dom";
 
 const AdminRoute = () => {
   const isAdmin = useAppSelector(getStateUserIsAdmin);
+
+  if(!isAdmin) return <Navigate to={'/home'}/>
   
-  return (
-    <>
-      {isAdmin ? (
-        <Outlet />
-      ) : (
-        <Container>
-          <Typography>Only admins can access this route</Typography>
-        </Container>
-      )}
-    </>
-  )
+  return <Outlet />
 }
 
 export default AdminRoute;

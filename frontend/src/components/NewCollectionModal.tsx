@@ -23,6 +23,11 @@ const NewCollectionModal: React.FC<Props> = ({ modalOpen, handleClose }) => {
   const [name, setName] = React.useState('');
   const [cards, setCards] = React.useState([]);
 
+  React.useEffect(() => {
+    setName('');
+    setCards([]);
+  }, [modalOpen]);
+
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value);
 
   const handleUpdateCards = (e: React.SyntheticEvent<Element, Event>, value: any) => setCards(value);

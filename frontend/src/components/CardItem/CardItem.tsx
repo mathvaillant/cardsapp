@@ -5,9 +5,9 @@ import Card from '@mui/material/Card';
 import { CardActionArea, Divider, Tooltip } from '@mui/material';
 import CardContent from '@mui/material/CardContent';
 import { ICard } from '../../slices/cardsSlice';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './CardItem.scss';
-import OwnerShipLabel from "../OwnerLabel";
+import OwnerShipLabel from "../OwnerShipLabel";
 
 interface Props {
 	card: ICard;
@@ -15,20 +15,17 @@ interface Props {
 
 const CardItem: React.FC<Props> = ({ card }) => {
 	const navigator = useNavigate();
-	const location = useLocation();
+	const params = useParams();
 	const { _id, name, value, description, colors, createdBy } = card;
 
-	const handleOpenSidebar = () =>
-		navigator(`/cards/${_id}`, {
-			state: { cardId: _id },
-		});
+	const handleOpenSidebar = () => navigator(`/cards/${_id}`);
 
 	return (
 		<Tooltip title='Click to edit' placement='top' arrow followCursor>
 			<Card
 				elevation={6}
 				className={classnames('CardItem', {
-					openOnSidebar: location?.state?.cardId === _id,
+					openOnSidebar: params.id === _id,
 				})}
 				sx={{
 					width: 240,

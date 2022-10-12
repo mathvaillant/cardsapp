@@ -6,11 +6,11 @@ const colors = require('colors');
 const helmet = require('helmet');
 const mongoSanitizer = require('express-mongo-sanitize');
 const xss = require('xss-clean');
-const hpp = require('hpp');
 
 const AppError = require('./utils/AppError');
 const { globalErrorController } = require('./controllers/errors/globalErrorController');
 
+const authRoutes = require('./routes/authRoutes');
 const usersRouter = require('./routes/usersRoutes');
 const cardsRoutes = require('./routes/cardsRoutes');
 const cardCollectionsRoutes = require('./routes/cardCollectionsRoutes');
@@ -38,6 +38,7 @@ app.use(mongoSanitizer());
 app.use(xss());
 
 // 2) Routes
+app.use('/auth', authRoutes);
 app.use('/users', usersRouter);
 app.use('/cards', cardsRoutes);
 app.use('/cardCollections', cardCollectionsRoutes);

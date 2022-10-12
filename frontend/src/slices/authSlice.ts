@@ -55,7 +55,17 @@ export const logout = createAsyncThunk('auth/logout', async () => await AuthServ
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    updateLoggedUser(state, action) {
+      state.user = action.payload as IUser;
+
+      const currentUserData = JSON.parse(localStorage.getItem('user') as string);
+      localStorage.setItem('user', JSON.stringify({
+        ...action.payload,
+        token: currentUserData.token,
+      }));
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(signUp.fulfilled, (state, action) => {
@@ -83,4 +93,5 @@ const authSlice = createSlice({
 
 const { reducer } = authSlice;
 
+export const { updateLoggedUser } = authSlice.actions;
 export default reducer;

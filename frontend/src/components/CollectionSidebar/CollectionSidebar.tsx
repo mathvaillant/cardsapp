@@ -5,7 +5,7 @@ import CollectionServices from "../../services/collectionsServices";
 import { ICard } from "../../slices/cardsSlice";
 import { getStateAllCards } from "../../selectors/cards";
 import { getStateCollection } from "../../selectors/collections";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
 import useDebounceCallback from "../../hooks/useDebounceCallback";
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -17,20 +17,28 @@ import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import { Button } from "@mui/material";
 import { toastr } from "react-redux-toastr";
 import './CollectionSidebar.scss';
+import _ from "underscore";
 
 const CollectionSidebar = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-  const { collectionId } = location.state;
+  const params = useParams();
+  const collectionId = params.id || '';
 
   const stateCollection = useAppSelector(getStateCollection(collectionId));
   const stateCards = useAppSelector(getStateAllCards);
 
-  const cardsInCollection = stateCards.filter(c => c.collectionId === collectionId);
-
   const [savingChanges, setSavingChanges] = useState(false);
-  const [name, setName] = useState(stateCollection?.name);
-  const [cards, setCards] = useState(cardsInCollection);
+  const [name, setName] = useState('');
+  const [cards, setCards] = useState<ICard[]>([]);
+
+  React.useEffect(() => {
+    if(stateCollection) {
+      const cardsInCollection = stateCards.filter(c => c.collectionId === collectionId);
+
+      setName(stateCollection.name);
+      setCards(cardsInCollection);
+    }
+  }, [stateCollection, stateCards, collectionId]);
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSavingChanges(true);
@@ -43,10 +51,20 @@ const CollectionSidebar = () => {
   };
 
   const handleSaveChanges = async (): Promise<void> => {
-    await CollectionServices.updateCollection(collectionId, name);
-    
-    const cardsIds = cards.map((card: ICard) => card._id);
-    await CardsServices.updateMultiple(cardsIds, collectionId);
+    const cardsIdsInCollection = stateCards.filter(c => c.collectionId === collectionId).map(el => el._id);
+    const newCardsIdsSelected = cards.map((card: ICard) => card._id);
+
+    const nameChanged = name !== stateCollection?.name;
+    const cardsChanged = !_.isEqual(newCardsIdsSelected, cardsIdsInCollection);
+
+    if(nameChanged) {
+      await CollectionServices.updateCollection(collectionId, name);
+    };
+
+    if(cardsChanged) {
+      await CardsServices.updateMultiple(newCardsIdsSelected, collectionId);
+    }
+
     setSavingChanges(false);
   };
 
@@ -77,65 +95,70 @@ const CollectionSidebar = () => {
         component="form"
         sx={{
           display: 'flex',
+          textAlign: 'center',
           flexDirection: 'column',
           gap: 5
         }}
       >
-        <Box
-          sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
-        >
-          <Typography variant="h4">Edit Collection</Typography>
-          <LoadingButton
-            className='LoadingButton'
-            disabled={true}
-            size="small"
-            color='secondary'
-            loading={savingChanges}
-            loadingPosition="start"
-            startIcon={<CloudDoneIcon />}
-            variant="outlined"
-          >
-            {savingChanges ? 'Saving...' : 'Up to date'}
-          </LoadingButton>
-        </Box>
-          <TextField
-            sx={{ mt: 2 }}
-            id='name'
-            onChange={handleChangeName}
-            value={name}
-            size="small"
-            label="Name"
-            type="text"
-            fullWidth
-            variant="outlined"
-          />
-          <Autocomplete
-            onChange={handleUpdateCards}
-            multiple
-            size="small"
-            id="Cards"
-            value={cards}
-            isOptionEqualToValue={(option, value) => value._id === option._id}
-            filterSelectedOptions
-            options={stateCards.filter(c => c.createdBy === stateCollection?.createdBy)}
-            getOptionLabel={(option) => option.name}
-            renderInput={(params) => (
-              <TextField
-                {...params}
+        {!stateCollection ? (
+          <Typography variant="h4">Collection Not Found!</Typography>
+        ) : (
+          <>
+            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Typography variant="h4">Edit Collection</Typography>
+              <LoadingButton
+                className='LoadingButton'
+                disabled={true}
+                size="small"
+                color='secondary'
+                loading={savingChanges}
+                loadingPosition="start"
+                startIcon={<CloudDoneIcon />}
                 variant="outlined"
-                label="Cards"
-                placeholder="Search for a card"
-              />
-            )}
-          />
-          <Button
-            size="small"
-            onClick={handleDeleteCollection}
-            variant="outlined"
-            sx={{ display: 'block', width: 'max-content', m: 'auto' }}
-          >
-            Delete
-          </Button>
+              >
+                {savingChanges ? 'Saving...' : 'Up to date'}
+              </LoadingButton>
+            </Box> 
+            <TextField
+              sx={{ mt: 2 }}
+              id='name'
+              onChange={handleChangeName}
+              value={name}
+              size="small"
+              label="Name"
+              type="text"
+              fullWidth
+              variant="outlined"
+            />
+            <Autocomplete
+              onChange={handleUpdateCards}
+              multiple
+              size="small"
+              id="Cards"
+              value={cards}
+              isOptionEqualToValue={(option, value) => value._id === option._id}
+              filterSelectedOptions
+              options={stateCards.filter(c => c.createdBy === stateCollection?.createdBy)}
+              getOptionLabel={(option) => option.name}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  label="Cards"
+                  placeholder="Search for a card"
+                />
+              )}
+            />
+            <Button
+              size="small"
+              onClick={handleDeleteCollection}
+              variant="outlined"
+              sx={{ display: 'block', width: 'max-content', m: 'auto' }}
+            >
+              Delete
+            </Button>
+          </>
+        )}
       </Box>
     </CustomSidebar>
   )

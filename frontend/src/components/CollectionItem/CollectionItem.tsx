@@ -9,9 +9,8 @@ import CardMedia from '@mui/material/CardMedia';
 import CardsIcon from '@mui/icons-material/Style';
 import { useAppSelector } from '../../app/hooks';
 import { getStateAllCards } from '../../selectors/cards';
-import { ICard } from '../../slices/cardsSlice';
+import OwnerShipLabel from "../OwnerShipLabel";
 import './CollectionItem.scss';
-import OwnerShipLabel from "../OwnerLabel";
 
 interface Props {
 	collection: ICollection;
@@ -24,19 +23,11 @@ const CollectionItem: React.FC<Props> = ({ collection }) => {
 
 	const stateCards = useAppSelector(getStateAllCards);
 
-	const cardsInCollection = React.useMemo(() =>
-		stateCards.reduce((acc: ICard[], card: ICard): ICard[] => {
-			if (card.collectionId === _id) {
-				return [...acc, card];
-			}
-			return acc;
-		}, []),
-		[stateCards, _id]
-	);
+	const cardsInCollection = React.useMemo(() => {
+		return stateCards.filter(card => card.collectionId === _id);
+	}, [stateCards, _id]);
 
-	const handleOpenSidebar = () => navigator(`/collections/${_id}`, {
-		state: { collectionId: _id },
-	});
+	const handleOpenSidebar = () => navigator(`/collections/${_id}`);
 
 	return (
 		<Card

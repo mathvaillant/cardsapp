@@ -8,7 +8,7 @@ interface ResponseAuthSuccess extends APIResponse {
 }
 
 const signUp = async (name: string, username: string, password: string): Promise<ResponseAuthSuccess | ResponseError> => {
-  const { data } = await axios.post(`${API_URL}/users/signup`, {
+  const { data } = await axios.post(`${API_URL}/auth/signup`, {
     name,
     username,
     password
@@ -22,7 +22,7 @@ const signUp = async (name: string, username: string, password: string): Promise
 };
 
 const login = async (username: string, password: string): Promise<ResponseAuthSuccess | ResponseError> => {
-  const { data } = await axios.post(`${API_URL}/users/login`, {
+  const { data } = await axios.post(`${API_URL}/auth/login`, {
     username,
     password
   });

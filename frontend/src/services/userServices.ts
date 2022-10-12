@@ -27,13 +27,13 @@ const getAllUsers = async (): Promise<ResponseAllUsers | ResponseError> => {
   }
 }
 
-const updateUser = async (userId: string, name: string, username: string, role: string): Promise<
+const updateUser = async (userId: string, name: string, username: string): Promise<
   ResponseUpdateSuccess | ResponseError
 > => {
   try {
     const token = getToken();
     const { data } = await axios.patch(`${API_URL}/users/${userId}`, {
-      name, username, role
+      name, username
     }, mapAuthBearerToken(token));
     return data;
   } catch (error) {

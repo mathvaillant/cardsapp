@@ -11,7 +11,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { logout } from '../slices/authSlice';
-import { getStateUser } from "../selectors/users";
+import { getStateLoggedUser } from "../selectors/users";
 import EditUserModal from "./EditUserModal";
 
 const Header = () => {
@@ -20,7 +20,7 @@ const Header = () => {
 	const [modalOpen, setModalOpen] = useState(false);
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-	const stateUser = useAppSelector(getStateUser);
+	const stateUser = useAppSelector(getStateLoggedUser);
 
 	const handleMenu = (event: React.MouseEvent<HTMLElement>) =>
 		setAnchorEl(event.currentTarget);

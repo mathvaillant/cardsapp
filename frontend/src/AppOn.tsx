@@ -39,7 +39,7 @@ const AppOn = () => {
       Users.bind('child_updated', () => dispatch(getAllUsers()));
       Users.bind('child_deleted', () => dispatch(getAllUsers()));
     };
-  }, [Cards, Collections, Users, loggedUser, isLoggedIn, dispatch]);
+  }, [Cards, Collections, Users, loggedUser, isLoggedIn]);
 
   useEffect(() => {
     if(!isLoggedIn) {
@@ -53,7 +53,7 @@ const AppOn = () => {
     if(loggedUser?.role === 'admin') {
       dispatch(getAllUsers());
     };
-  }, [isLoggedIn, loggedUser, dispatch, navigate]);
+  }, [isLoggedIn, loggedUser]);
 
   return (
     <div className="AppOn">
