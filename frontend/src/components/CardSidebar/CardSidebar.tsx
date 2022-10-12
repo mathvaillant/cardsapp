@@ -15,6 +15,7 @@ import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import { Button } from "@mui/material";
 import { toastr } from "react-redux-toastr";
 import './CardSidebar.scss';
+import { ICollection } from "../../slices/collectionsSlice";
 
 const CardSidebar = () => {
   const location = useLocation();
@@ -46,7 +47,7 @@ const CardSidebar = () => {
 
   const handleChangeCollectionId = (e: React.SyntheticEvent<Element, Event>, value: any) => {
     setSavingChanges(true);
-    setCollectionId(value);
+    setCollectionId(value._id);
   };
 
   const handleSaveChanges = async (): Promise<void> => {
@@ -78,6 +79,8 @@ const CardSidebar = () => {
       },
     })
   };
+
+  const currentCollection = stateCollections.find(c => c._id === collectionId);
 
   return (
     <CustomSidebar>
@@ -142,7 +145,7 @@ const CardSidebar = () => {
             onChange={handleChangeCollectionId}
             size="small"
             id="collection"
-            value={stateCollections.find(c => c._id === collectionId)}
+            value={currentCollection}
             options={stateCollections}
             filterSelectedOptions
             getOptionLabel={(option) => option.name}

@@ -11,6 +11,7 @@ import { IUser } from "../../slices/authSlice";
 import { toastr } from "react-redux-toastr";
 import UserServices from "../../services/userServices";
 import UserItem from "../../components/UserItem/UserItem";
+import { pusherInstance } from "../../pusher";
 
 const Users = () => {
 	const navigate = useNavigate();
@@ -33,20 +34,26 @@ const Users = () => {
 		});
 	}, [users, debouncedFilterValue]);
 
+	const Users = React.useMemo(() => pusherInstance().subscribe('users'), []);
+
+	const handleGetUsers = React.useCallback(async () => {
+		setIsLoading(true);
+		const { status, data } = await UserServices.getAllUsers();
+
+		if(!data) {
+			toastr.error(status, 'Could not find any users');
+			return;
+		}
+
+		setUsers(data);
+		setIsLoading(false);
+	}, []);
+
   useEffect(() => {
-    (async () => {
-			setIsLoading(true);
-      const { status, data } = await UserServices.getAllUsers();
-
-      if(!data) {
-        toastr.error(status, 'Could not find any users');
-        return;
-      }
-
-      setUsers(data);
-			setIsLoading(false);
-    })()
-  }, []);
+    handleGetUsers();
+		Users.bind('child_updated', () => handleGetUsers());
+		Users.bind('child_deleted', () => handleGetUsers());
+  }, [Users, handleGetUsers]);
 
 	return (
 		<>

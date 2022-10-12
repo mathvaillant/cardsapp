@@ -67,4 +67,4 @@ const CollectionItem: React.FC<Props> = ({ collection }) => {
 	);
 };
 
-export default CollectionItem;
+export default React.memo(CollectionItem);

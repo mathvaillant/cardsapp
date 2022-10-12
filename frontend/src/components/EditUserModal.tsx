@@ -7,17 +7,20 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { IUser } from "../slices/authSlice";
+import { IUser, logout } from "../slices/authSlice";
 import UserServices from "../services/userServices";
 import { FormControl, InputLabel, MenuItem } from "@mui/material";
+import { useAppDispatch } from "../app/hooks";
 
 interface Props {
   modalOpen: boolean
   handleClose: () => void
-  user: IUser
+  user: IUser,
+  isEditingProfile?: boolean
 }
 
-const EditUserModal: React.FC<Props> = ({ modalOpen, handleClose, user }) => {
+const EditUserModal: React.FC<Props> = ({ modalOpen, handleClose, user, isEditingProfile = false}) => {
+  const dispatch = useAppDispatch();
   const [data, setData] = React.useState({
     name: user.name,
     username: user.username,
@@ -40,15 +43,16 @@ const EditUserModal: React.FC<Props> = ({ modalOpen, handleClose, user }) => {
   }
 
   const handleDeleteUser = () => {
-    if(user.role === 'admin') {
-      toastr.error('You cannot delete another admin!', '');
-      return;
-    }
-
-    toastr.confirm('Are you sure you want to delete this user?', {
+    toastr.confirm('Are you sure?', {
       onOk: async () => {
         await UserServices.deleteUser(user._id);
-        toastr.success('User successfully deleted', '');
+
+        if(isEditingProfile) {
+          dispatch(logout());
+          return;
+        }
+
+        toastr.success(isEditingProfile ? 'Account deleted' : 'User successfully deleted', '');
         handleClose();
       },
     });
@@ -65,6 +69,15 @@ const EditUserModal: React.FC<Props> = ({ modalOpen, handleClose, user }) => {
       toastr.error(status, message);
       return;
     }
+
+    if(isEditingProfile) {
+      const currentUserData = JSON.parse(localStorage.getItem('user') as string);
+      localStorage.setItem('user', JSON.stringify({
+        ...userUpdated,
+        token: currentUserData.token,
+      }));
+    }
+
     toastr.success(status, message);
     handleClose();
   };
@@ -93,23 +106,31 @@ const EditUserModal: React.FC<Props> = ({ modalOpen, handleClose, user }) => {
           type="text"
           fullWidth variant="outlined"
         />
-        <FormControl fullWidth size="small">
-          <InputLabel id="select">Role</InputLabel>
-          <Select
-            disabled={user.role === 'admin'}
-            labelId="select"
-            id="role"
-            value={data.role}
-            label="Role"
-            onChange={handleSelectRole}
-          >
-            <MenuItem value={'user'}>User</MenuItem>
-            <MenuItem value={'admin'}>Admin</MenuItem>
-          </Select>
-        </FormControl>
+        {isEditingProfile && user.role !== 'admin' ? null : (
+          <FormControl fullWidth size="small">
+            <InputLabel id="select">Role</InputLabel>
+            <Select
+              labelId="select"
+              id="role"
+              value={data.role}
+              label="Role"
+              onChange={handleSelectRole}
+            >
+              <MenuItem value={'user'}>User</MenuItem>
+              <MenuItem value={'admin'}>Admin</MenuItem>
+            </Select>
+          </FormControl>
+        )}
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
-        <Button size="small" variant="text" sx={{ mr: 'auto' }} onClick={handleDeleteUser}>Delete User</Button>
+        <Button 
+          size="small" 
+          variant="text" 
+          sx={{ mr: 'auto' }}
+          onClick={handleDeleteUser}
+        >
+          {isEditingProfile ? 'Delete account' : 'Delete user'}
+        </Button>
         <Button size="small" variant="outlined" onClick={handleClose}>Cancel</Button>
         <Button size="small" variant="contained" onClick={handleSaveChanges}>Save</Button>
       </DialogActions>

@@ -23,8 +23,7 @@ const Cards = () => {
 
 	const debouncedFilterValue = useDebounceValue(filterValue, 750);
 
-	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) =>
-		setFilterValue(e.target.value);
+	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => setFilterValue(e.target.value);
 
 	const handleToggleModal = () => setModalOpen(!modalOpen);
 

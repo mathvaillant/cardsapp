@@ -70,4 +70,4 @@ const CardItem: React.FC<Props> = ({ card }) => {
 	);
 };
 
-export default CardItem;
+export default React.memo(CardItem);
