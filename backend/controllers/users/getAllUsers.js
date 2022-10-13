@@ -4,7 +4,7 @@ const APIQuery = require("../../utils/APIQuery");
 exports.getAllUsers = async(req, res, next) => {
   try {
     const mongooseQuery = User.find({ _id: { $ne: req.user._id } });
-    const apiQuery = new APIQuery(mongooseQuery, req.query).paginate();
+    const apiQuery = new APIQuery(mongooseQuery, req.query).filter().paginate();
     const result = await apiQuery.mongooseQuery;  
 
     res.status(200).json({

@@ -1,14 +1,16 @@
 import React from 'react';
 
-const useScrollBottomCallback = (callback: () => void, dependencies: any[]) => {
+const useScrollBottomCallback = (callback: () => void, disableCallback: boolean, dependencies: any[]) => {
   React.useEffect(() => {
+		if(disableCallback) return;
+
 		window.onscroll = function() {
-			if((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+			if((window.innerHeight + document.documentElement.scrollTop) >= document.body.offsetHeight - 5) {
 			  callback();	
 			}
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [...dependencies]);
+	}, [...dependencies, disableCallback]);
 }
 
 export default useScrollBottomCallback;

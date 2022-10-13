@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router';
 import { useNavigate } from 'react-router';
 import Button from '@mui/material/Button';
@@ -26,10 +26,7 @@ const Cards = () => {
 
 	const debouncedSearchValue = useDebounceValue(searchValue, 750);
 
-	useScrollBottomCallback(() => {
-		if(allFetched) return;
-		setPage(page + 1)
-	}, [page, allFetched]);
+	useScrollBottomCallback(() => setPage(page + 1), allFetched, [page]);
 
 	useEffect(() => {
 		(async () => {
@@ -49,11 +46,7 @@ const Cards = () => {
 
 			setCards([...cards, ...data]);
 		})();
-	}, [page, allFetched]);
-
-	useEffect(() => {
-		// handle get data filtered by searchValue
-	}, [cards, debouncedSearchValue]);
+	}, [page, allFetched, debouncedSearchValue]);
 
 	const handleGoBack = () => navigate('/home');
 

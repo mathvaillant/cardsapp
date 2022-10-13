@@ -7,10 +7,10 @@ exports.getAllCards = async (req, res, next) => {
 
     if(req.user.role === 'admin') {
       const mongooseQuery = Card.find();
-      cards = new APIQuery(mongooseQuery, req.query).paginate();
+      cards = new APIQuery(mongooseQuery, req.query).filter().paginate();
     } else {
-      const mongooseQuery = Card.find({ createdBy: req.user._id });
-      cards = new APIQuery(mongooseQuery, req.query).paginate();
+      const mongooseQuery = Card.find({ createdBy: req.user._id }); 
+      cards = new APIQuery(mongooseQuery, req.query).filter().paginate();
     }
 
     const cardsResult = await cards.mongooseQuery;
