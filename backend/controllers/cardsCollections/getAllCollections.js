@@ -1,20 +1,25 @@
 const CardCollection = require('../../models/cardCollectionModel');
+const APIQuery = require("../../utils/APIQuery");
 
 exports.getAllCollections = async (req, res, next) => {
   try {
     let collections = [];
 
     if(req.user.role === 'admin') {
-      collections = await CardCollection.find();
+      const mongooseQuery = CardCollection.find();
+      collections = new APIQuery(mongooseQuery, req.query).paginate();
     } else {
-      collections = await CardCollection.find({ createdBy: req.user._id });
+      const mongooseQuery = CardCollection.find({ createdBy: req.user._id });
+      collections = new APIQuery(mongooseQuery, req.query).paginate();
     }
+
+    const collectionsResult = await collections.mongooseQuery;  
 
     res.status(200).json({
       status: 'success',
       message: 'Collections successfully retrieved',
-      results: collections.length,
-      data: collections
+      results: collectionsResult.length,
+      data: collectionsResult
     })
   } catch (error) {
     next(error);
