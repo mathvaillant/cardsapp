@@ -30,10 +30,10 @@ interface ResponseGetAllSuccess extends APIResponse {
   results: number
 }
 
-const getAllCards = async (): Promise<ResponseGetAllSuccess | ResponseError> => {
+const getAllCards = async (page?: number): Promise<ResponseGetAllSuccess | ResponseError> => {
   try {
     const token = getToken();
-    const { data } = await axios.get(`${API_URL}/cards`, mapAuthBearerToken(token));
+    const { data } = await axios.get(`${API_URL}/cards?page=${page}`, mapAuthBearerToken(token));
     return data;
   } catch (error) {
     return mapErrorResponse(error);    

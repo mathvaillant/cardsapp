@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Outlet } from 'react-router';
 import { useNavigate } from 'react-router';
 import Container from '@mui/material/Container';
@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import useDebounceValue from '../../hooks/useDebounceValue';
 import SearchInput from '../../components/SearchInput';
 import BackButton from '../../components/BackButton';
-import { CircularProgress, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import UserItem from "../../components/UserItem/UserItem";
 import { useAppSelector } from "../../app/hooks";
 import { getStateUsers } from "../../selectors/users";

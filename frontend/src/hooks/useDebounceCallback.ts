@@ -8,6 +8,7 @@ const useDebounceCallback = (callback: () => void, delay: number, dependencies: 
     useEffect(reset, [...dependencies, reset]);
 
     // clear it on mount before it fires
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(clear, []);
 };
 

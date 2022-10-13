@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import { RootState } from "../app/store";
 import { ICard } from "../slices/cardsSlice";
 
