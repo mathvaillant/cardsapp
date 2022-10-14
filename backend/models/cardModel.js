@@ -44,6 +44,7 @@ cardSchema.post('save', async function(newCard) {
   );
 
   PusherInit.trigger(PUSHER_CHANNEL, 'child_added', {
+    reason: 'card_added', 
     data_changed: {
       cards: mapKeyValueEvent([newCard._id], 'child_added'), 
       users: mapKeyValueEvent([newCard.createdBy], 'child_updated'), 
@@ -53,6 +54,7 @@ cardSchema.post('save', async function(newCard) {
 
 cardSchema.post("findOneAndUpdate", async function(updatedCard) {
   PusherInit.trigger(PUSHER_CHANNEL, 'child_updated', {
+    reason: 'card_updated', 
     data_changed: {
       cards: mapKeyValueEvent([updatedCard._id], 'child_updated'), 
     }, 
@@ -67,6 +69,7 @@ cardSchema.post("remove", async function(deletedCard) {
   });
 
   PusherInit.trigger(PUSHER_CHANNEL, 'child_deleted', {  
+    reason: 'card_deleted', 
     data_changed: {
       cards: mapKeyValueEvent([deletedCard._id], 'child_deleted'), 
       users: mapKeyValueEvent([deletedCard.createdBy], 'child_updated'), 

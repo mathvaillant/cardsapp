@@ -3,9 +3,6 @@ import { useAppDispatch, useAppSelector } from './app/hooks';
 import { useNavigate } from 'react-router';
 import { Outlet } from "react-router";
 import Header from "./components/Header";
-import { getAllUsers } from "./slices/usersSlice";
-import { getAllCards } from "./slices/cardsSlice";
-import { getAllCollections } from "./slices/collectionsSlice";
 import { pusherInstance } from "./pusher";
 import { IPusherTriggerData, mapPusherUpdates } from "./slices/pusherSlice";
 
@@ -26,11 +23,6 @@ const AppOn = () => {
     Cards.bind('child_updated', (data: IPusherTriggerData) => dispatch(mapPusherUpdates(data)));
     Cards.bind('child_deleted', (data: IPusherTriggerData) => dispatch(mapPusherUpdates(data)));
     Cards.bind('child_added', (data: IPusherTriggerData) => dispatch(mapPusherUpdates(data)));
-    
-    // Cards.bind('childs_updated', () => {
-    //   dispatch(getAllCollections());
-    //   dispatch(getAllCards());
-    // });
     
     Collections.bind('child_updated', (data: IPusherTriggerData) => dispatch(mapPusherUpdates(data)));
     Collections.bind('child_deleted', (data: IPusherTriggerData) => dispatch(mapPusherUpdates(data)));

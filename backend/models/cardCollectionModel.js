@@ -26,6 +26,7 @@ collectionSchema.post("save", async function(newCollection) {
   )
 
   PusherInit.trigger(PUSHER_CHANNEL, 'child_added', {
+    reason: 'collection_added',
     data_changed: {
       collections: mapKeyValueEvent([newCollection._id], 'child_added'), 
       users: mapKeyValueEvent([newCollection.createdBy], 'child_updated'), 
@@ -35,6 +36,7 @@ collectionSchema.post("save", async function(newCollection) {
 
 collectionSchema.post("findOneAndUpdate", async function(updatedCollection) {
   PusherInit.trigger(PUSHER_CHANNEL, 'child_updated', {
+    reason: 'collection_updated',
     data_changed: {
       collections: mapKeyValueEvent([updatedCollection._id], 'child_updated'), 
     }, 
@@ -57,6 +59,7 @@ collectionSchema.post("remove", async function(deletedCollection) {
   });
 
   PusherInit.trigger(PUSHER_CHANNEL, 'child_deleted', {  
+    reason: 'collection_deleted',
     data_changed: {
       collections: mapKeyValueEvent([deletedCollection._id], 'child_deleted'), 
       users: mapKeyValueEvent([deletedCollection.createdBy], 'child_updated'), 

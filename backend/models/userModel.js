@@ -51,6 +51,7 @@ userSchema.methods.isPasswordCorrect = async function(inputPassword, currentUser
 
 userSchema.post("save", async function(newUser) {
   PusherInit.trigger(PUSHER_CHANNEL, 'child_added', {
+    reason: 'user_added', 
     data_changed: {
       users: mapKeyValueEvent([newUser._id], 'child_added'), 
     }, 
@@ -59,6 +60,7 @@ userSchema.post("save", async function(newUser) {
 
 userSchema.post("findOneAndUpdate", async function(updatedUser) {
   PusherInit.trigger(PUSHER_CHANNEL, 'child_updated', {
+    reason: 'user_updated', 
     data_changed: {
       users: mapKeyValueEvent([updatedUser._id], 'child_updated'), 
     }, 
