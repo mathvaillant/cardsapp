@@ -12,7 +12,6 @@ export enum IReason {
   user_added = 'user_added',
   user_updated = 'user_updated',
   user_deleted = 'user_deleted',
-  null = 'null',
 }
 export interface IDataChanged {
   cards: { [key: string]: IPusherEventType }
