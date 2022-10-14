@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 const { getCardColors } = require("../utils/getCardColors");
+const mapKeyValueEvent = require("../utils/mapKeyValueEvent");
+const PusherInit = require("../pusher");
+
+const PUSHER_CHANNEL = 'cards';
 
 const cardSchema = mongoose.Schema({
   name: {
@@ -30,6 +34,44 @@ const cardSchema = mongoose.Schema({
   }
 }, {
   timestamps: true,
+});
+
+cardSchema.post("save", async function(newCard) {
+  const User = require('./userModel');
+
+  await User.updateOne({ _id: newCard.createdBy }, 
+    { $push: { cards: newCard._id } },
+  );
+
+  PusherInit.trigger(PUSHER_CHANNEL, 'child_added', {
+    data_changed: {
+      cards: mapKeyValueEvent([newCard._id], 'child_added'), 
+      users: mapKeyValueEvent([newCard.createdBy], 'child_updated'), 
+    }, 
+  });
+});
+
+cardSchema.post("findOneAndUpdate", async function(updatedCard) {
+  PusherInit.trigger(PUSHER_CHANNEL, 'child_updated', {
+    data_changed: {
+      cards: mapKeyValueEvent([updatedCard._id], 'child_updated'), 
+    }, 
+  });
+});
+
+cardSchema.post("remove", async function(deletedCard) {
+  const User = require('./userModel');
+  
+  await User.findByIdAndUpdate(deletedCard.createdBy, {
+    $pull: { cards: deletedCard._id }
+  });
+
+  PusherInit.trigger(PUSHER_CHANNEL, 'child_deleted', {  
+    data_changed: {
+      cards: mapKeyValueEvent([deletedCard._id], 'child_deleted'), 
+      users: mapKeyValueEvent([deletedCard.createdBy], 'child_updated'), 
+    },
+  });
 });
 
 const Card = mongoose.model('Card', cardSchema);

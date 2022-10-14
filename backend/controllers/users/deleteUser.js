@@ -6,19 +6,8 @@ const { CHANNEL_NAME } = require('./constants');
 
 exports.deleteUser = async (req, res, next) => {
   try {
-    const userDeleted = await User.findByIdAndDelete(req.params.id);
-    
-    await Card.deleteMany({
-      createdBy: { $eq: userDeleted._id }
-    });
-
-    await CardCollection.deleteMany({
-      createdBy: { $eq: userDeleted._id }
-    });
-
-    PusherInit.trigger(CHANNEL_NAME, 'child_deleted', {
-      message: 'User deleted',
-      userId: userDeleted._id,  
+    User.findOneAndRemove({ _id: req.params.id }, function(err, user) {
+      user.remove(); // Call remove in order to fire the model hook
     });
 
     res.status(204).json({

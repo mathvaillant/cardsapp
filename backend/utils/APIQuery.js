@@ -10,7 +10,7 @@ class APIQuery {
     const queryObject = {...this.requestQuery};
     let queryString = JSON.stringify(_.omit(queryObject, ['page']));
 
-    // Clean data coming from request
+    // Clean data coming from the request
     queryString = queryString.replace(/\b(gte)|gt|lte|lt\b/g, match => `$${match}`);
     
     if(_.isEmpty(JSON.parse(queryString))) return this;
@@ -18,7 +18,7 @@ class APIQuery {
     const regexQueryArray = _.reduce(JSON.parse(queryString), (acc, entry, key) => {
       return [
         ...acc,
-        { [key]: { '$regex': entry } }
+        { [key]: { '$regex': entry, '$options' : 'i' } }
       ]
     }, []);
 

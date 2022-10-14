@@ -12,6 +12,10 @@ interface RequestData {
   collectionId?: string | undefined
 }
 
+interface ResponseGetSingleSuccess extends APIResponse {
+  data: ICard
+}
+
 interface ResponseCreateSuccess extends APIResponse {
   data: ICard;
 }
@@ -28,6 +32,16 @@ interface ResponseDeleteSuccess extends APIResponse {
 interface ResponseGetAllSuccess extends APIResponse {
   data: ICard[]
   results: number
+}
+
+const getSingleCard = async (cardId: string): Promise<ResponseGetSingleSuccess | ResponseError> => {
+  const token = getToken();
+  try {
+    const { data } = await axios.get(`${API_URL}/cards/${cardId}`, mapAuthBearerToken(token));
+    return data;
+  } catch (error) {
+    return mapErrorResponse(error);
+  }
 }
 
 const getAllCards = async (page?: number, searchValue: string = ''): Promise<ResponseGetAllSuccess | ResponseError> => {
@@ -87,6 +101,7 @@ const updateMultiple = async (cardsIds: string[], collectionId: string): Promise
 
 const CardsServices = {
   getAllCards,
+  getSingleCard,
   deleteCard,
   updateCard,
   createNewCard,

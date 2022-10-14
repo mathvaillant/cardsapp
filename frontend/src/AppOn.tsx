@@ -7,6 +7,7 @@ import { getAllUsers } from "./slices/usersSlice";
 import { getAllCards } from "./slices/cardsSlice";
 import { getAllCollections } from "./slices/collectionsSlice";
 import { pusherInstance } from "./pusher";
+import { IPusherTriggerData, mapPusherUpdates } from "./slices/pusherSlice";
 
 const AppOn = () => {
   const dispatch = useAppDispatch();
@@ -22,22 +23,22 @@ const AppOn = () => {
   React.useEffect(() => {
     if(!isLoggedIn) return;
 
-    Cards.bind('child_added', () => dispatch(getAllCards()));
-    Cards.bind('child_deleted', () => dispatch(getAllCards()));
-    Cards.bind('child_updated', () => dispatch(getAllCards()));
+    Cards.bind('child_updated', (data: IPusherTriggerData) => dispatch(mapPusherUpdates(data)));
+    Cards.bind('child_deleted', (data: IPusherTriggerData) => dispatch(mapPusherUpdates(data)));
+    Cards.bind('child_added', (data: IPusherTriggerData) => dispatch(mapPusherUpdates(data)));
     
-    Cards.bind('childs_updated', () => {
-      dispatch(getAllCollections());
-      dispatch(getAllCards());
-    });
+    // Cards.bind('childs_updated', () => {
+    //   dispatch(getAllCollections());
+    //   dispatch(getAllCards());
+    // });
     
-    Collections.bind('child_added', () => dispatch(getAllCollections()));
-    Collections.bind('child_deleted', () => dispatch(getAllCollections()));
-    Collections.bind('child_updated', () => dispatch(getAllCollections()));
+    Collections.bind('child_updated', (data: IPusherTriggerData) => dispatch(mapPusherUpdates(data)));
+    Collections.bind('child_deleted', (data: IPusherTriggerData) => dispatch(mapPusherUpdates(data)));
+    Collections.bind('child_added', (data: IPusherTriggerData) => dispatch(mapPusherUpdates(data)));
 
     if(loggedUser?.role === 'admin') {
-      Users.bind('child_updated', () => dispatch(getAllUsers()));
-      Users.bind('child_deleted', () => dispatch(getAllUsers()));
+      Users.bind('child_updated', (data: IPusherTriggerData) => dispatch(mapPusherUpdates(data)));
+      Users.bind('child_deleted', (data: IPusherTriggerData) => dispatch(mapPusherUpdates(data)));
     };
   }, [Cards, Collections, Users, loggedUser, isLoggedIn]);
 
@@ -46,14 +47,7 @@ const AppOn = () => {
       navigate('/login');
       return;
     };
-
-    dispatch(getAllCards());
-    dispatch(getAllCollections());
-
-    if(loggedUser?.role === 'admin') {
-      dispatch(getAllUsers());
-    };
-  }, [isLoggedIn, loggedUser]);
+  }, [isLoggedIn]);
 
   return (
     <div className="AppOn">

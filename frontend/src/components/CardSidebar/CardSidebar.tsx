@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CardsServices from "../../services/cardsServices";
 import CustomSidebar from "../CustomSidebar";
 import { getStateCard } from "../../selectors/cards";
@@ -16,29 +16,40 @@ import { Button } from "@mui/material";
 import { toastr } from "react-redux-toastr";
 import './CardSidebar.scss';
 import _ from "underscore";
+import { ICard } from "../../slices/cardsSlice";
 
 const CardSidebar = () => {
   const navigate = useNavigate();
   const params = useParams();
   const cardId = params.id || '';
 
-  const stateCard = useAppSelector(getStateCard(cardId));
   const stateCollections = useAppSelector(getStateAllCollections);
 
+  const [lastResponseCard, setLastResponseCard] = useState<ICard | null>(null);
   const [savingChanges, setSavingChanges] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [value, setValue] = useState(0);
   const [collectionId, setCollectionId] = useState<string | undefined>(undefined);
 
-  React.useEffect(() => {
-    if(stateCard) {
-      setName(stateCard.name);
-      setDescription(stateCard.description);
-      setValue(stateCard.value);
-      setCollectionId(stateCard.collectionId);
-    }
-  }, [stateCard]);
+  useEffect(() => {
+    if(lastResponseCard) return;
+    
+    (async () => {
+      const { status, message, data } = await CardsServices.getSingleCard(cardId);
+
+      if(!data) {
+        toastr.error(status, message);
+        return;
+      }
+
+      setLastResponseCard(data);
+      setName(data.name);
+      setDescription(data.description);
+      setValue(data.value);
+      setCollectionId(data.collectionId);
+    })()
+  }, [cardId, lastResponseCard]);
 
   const handleChangeDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSavingChanges(true);
@@ -70,7 +81,7 @@ const CardSidebar = () => {
 
     const cardUpdated = !_.isEqual(
       cardUpdates, 
-      _.pick(stateCard, ['name', 'value', 'collectionId', 'description'])
+      _.pick(lastResponseCard, ['name', 'value', 'collectionId', 'description'])
     );
 
     if(cardUpdated) {
@@ -92,7 +103,7 @@ const CardSidebar = () => {
         try {
           await CardsServices.deleteCard(cardId);
           toastr.success('Card successfully deleted', '');
-          navigate('/cards')
+          navigate('/cards');
         } catch (error) {
           toastr.error('Something went wrong', '');
         }
@@ -114,7 +125,7 @@ const CardSidebar = () => {
           gap: 5,
         }}
       >
-        {!stateCard ? (
+        {!name && !value ? (
           <Typography variant="h4">Card Not Found!</Typography>
         ) : (
           <>
@@ -169,7 +180,7 @@ const CardSidebar = () => {
               size="small"
               id="collection"
               value={currentCollection}
-              options={stateCollections.filter(c => c.createdBy === stateCard?.createdBy)}
+              options={stateCollections.filter(c => c.createdBy === lastResponseCard?.createdBy)}
               filterSelectedOptions
               getOptionLabel={(option) => option.name}
               renderInput={(params) => (

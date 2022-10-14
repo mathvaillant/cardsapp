@@ -1,8 +1,5 @@
 const AppError = require('../../utils/AppError');
 const Card = require('../../models/cardModel');
-const User = require('../../models/userModel');
-const PusherInit = require('../../pusher');
-const { CHANNEL_NAME } = require('./constants');
 const { getCardColors } = require("../../utils/getCardColors");
 
 exports.createNewCard = async (req, res, next) => {
@@ -31,20 +28,6 @@ exports.createNewCard = async (req, res, next) => {
       collectionId,
       createdBy: req.user._id,
       colors: getCardColors(),
-    });
-
-    if(!newCard) {
-      throw new AppError('An error occurred while creating the new card', 400);
-    }
-
-    await User.findByIdAndUpdate(req.user._id, 
-      { $push: { cards: newCard._id } },
-      { upsert: true, new: true },
-    )
-
-    PusherInit.trigger(CHANNEL_NAME, 'child_added', {
-      message: 'New card added',
-      cardId: newCard._id,  
     });
 
     res.status(201).json({

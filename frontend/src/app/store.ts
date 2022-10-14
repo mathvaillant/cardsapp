@@ -3,11 +3,13 @@ import {reducer as toastrReducer} from 'react-redux-toastr';
 import authReducer from '../slices/authSlice';
 import cardsReducer from '../slices/cardsSlice';
 import usersReducer from '../slices/usersSlice';
+import pusherUpdatesReducer from '../slices/pusherSlice';
 import collectionsReducer from '../slices/collectionsSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    pusherUpdates: pusherUpdatesReducer,
     toastr: toastrReducer,
     cards: cardsReducer,
     users: usersReducer,
