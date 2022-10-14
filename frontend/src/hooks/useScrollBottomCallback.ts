@@ -5,7 +5,7 @@ const useScrollBottomCallback = (callback: () => void, disableCallback: boolean,
 		if(disableCallback) return;
 
 		window.onscroll = function() {
-			if((window.innerHeight + document.documentElement.scrollTop) >= document.body.offsetHeight - 5) {
+			if((window.innerHeight + document.documentElement.scrollTop) >= document.body.offsetHeight - .5) {
 			  callback();	
 			}
 		}

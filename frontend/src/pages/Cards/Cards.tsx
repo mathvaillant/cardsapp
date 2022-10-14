@@ -5,26 +5,33 @@ import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
+import { Typography } from '@mui/material';
+import { toastr } from "react-redux-toastr";
+import _ from "underscore";
+import { ICard } from "../../slices/cardsSlice";
 import CardItem from '../../components/CardItem/CardItem';
-import useDebounceValue from '../../hooks/useDebounceValue';
 import CardsServices from "../../services/cardsServices";
 import NewCardModal from '../../components/NewCardModal';
 import SearchInput from '../../components/SearchInput';
 import BackButton from '../../components/BackButton';
-import { Typography } from '@mui/material';
-import { ICard } from "../../slices/cardsSlice";
-import { toastr } from "react-redux-toastr";
 import useScrollBottomCallback from "../../hooks/useScrollBottomCallback";
+import useDebounceCallback from "../../hooks/useDebounceCallback";
 
 const Cards = () => {
 	const navigate = useNavigate();
 	const [page, setPage] = useState(1);
+	const [debouncedSearchValue, setDebouncedSearchValue] = useState('');
 	const [allFetched, setAllFetched] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [searchValue, setSearchValue] = useState('');
 	const [cards, setCards] = useState<ICard[]>([]);
 
-	const debouncedSearchValue = useDebounceValue(searchValue, 750);
+	useDebounceCallback(() => {
+		setPage(1);
+		setCards([]);
+		setAllFetched(false);
+		setDebouncedSearchValue(searchValue);
+	}, 750, [searchValue]);
 
 	useScrollBottomCallback(() => setPage(page + 1), allFetched, [page]);
 
@@ -32,12 +39,14 @@ const Cards = () => {
 		(async () => {
 			if(allFetched) return;
 
-			const { status, message, data } = await CardsServices.getAllCards(page);
-			
+			const { status, message, data } = await CardsServices.getAllCards(page, debouncedSearchValue);
+
 			if(!data) {
         toastr.error(status, message);
 				return;
 			}
+
+			if(_.isEqual(data, cards)) return;
 
 			if(!data.length) {
 				setAllFetched(true);
