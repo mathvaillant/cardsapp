@@ -1,13 +1,11 @@
-const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const PusherInit = require("../pusher");
 const mapKeyValueEvent = require("../utils/mapKeyValueEvent");
-const Card = require("./cardModel");
-const CardCollection = require("./cardCollectionModel");
 
 const PUSHER_CHANNEL = 'users';
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
   name: {
     type: String,
     require: [true, 'Please tell your name']
@@ -68,6 +66,9 @@ userSchema.post("findOneAndUpdate", async function(updatedUser) {
 });
 
 userSchema.post("remove", async function(deletedUser) {
+  const Card = require("./cardModel");
+  const CardCollection = require("./cardCollectionModel");
+  
   const cardsIds = await Card
     .find({ createdBy: deletedUser._id })
     .then((cards) => cards.map(card => card._id));
@@ -80,7 +81,8 @@ userSchema.post("remove", async function(deletedUser) {
 
   await CardCollection.deleteMany({ createdBy: deletedUser._id });
 
-  PusherInit.trigger(PUSHER_CHANNEL, 'child_deleted', {  
+  PusherInit.trigger(PUSHER_CHANNEL, 'child_deleted', {
+    reason: 'user_deleted',  
     data_changed: {
       users: mapKeyValueEvent([deletedUser._id], 'child_deleted'), 
       cards: mapKeyValueEvent(cardsIds, 'child_deleted'), 

@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const PusherInit = require("../pusher");
-const Card = require("./cardModel");
-const User = require("./userModel");
 const mapKeyValueEvent = require("../utils/mapKeyValueEvent");
 
 const PUSHER_CHANNEL = 'collections';
@@ -20,6 +18,8 @@ const collectionSchema = mongoose.Schema({
 });
 
 collectionSchema.post("save", async function(newCollection) {
+  const User = require("./userModel");
+
   await User.findByIdAndUpdate(newCollection.createdBy, 
     { $push: { collections: newCollection._id } },
     { upsert: true, new: true },
@@ -42,6 +42,9 @@ collectionSchema.post("findOneAndUpdate", async function(updatedCollection) {
 });
 
 collectionSchema.post("remove", async function(deletedCollection) {
+  const Card = require("./cardModel");
+  const User = require("./userModel");
+
   await User.findByIdAndUpdate(deletedCollection.createdBy, {
     $pull: { collections: deletedCollection._id }
   });

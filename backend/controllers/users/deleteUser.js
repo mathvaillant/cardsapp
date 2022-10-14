@@ -1,8 +1,4 @@
 const User = require('../../models/userModel');
-const CardCollection = require('../../models/cardCollectionModel');
-const Card = require('../../models/cardModel');
-const PusherInit = require('../../pusher');
-const { CHANNEL_NAME } = require('./constants');
 
 exports.deleteUser = async (req, res, next) => {
   try {

@@ -5,7 +5,7 @@ const PusherInit = require("../pusher");
 
 const PUSHER_CHANNEL = 'cards';
 
-const cardSchema = mongoose.Schema({
+const cardSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -36,10 +36,10 @@ const cardSchema = mongoose.Schema({
   timestamps: true,
 });
 
-cardSchema.post("save", async function(newCard) {
+cardSchema.post('save', async function(newCard) {
   const User = require('./userModel');
 
-  await User.updateOne({ _id: newCard.createdBy }, 
+  await User.findByIdAndUpdate(newCard.createdBy, 
     { $push: { cards: newCard._id } },
   );
 
