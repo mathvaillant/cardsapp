@@ -2,17 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 type IPusherEventType = 'child_updated' | 'child_added' | 'child_deleted';
 
-export enum IReason {
-  card_added = 'card_added',
-  card_updated = 'card_updated',
-  card_deleted = 'card_deleted',
-  collection_added = 'collection_added',
-  collection_updated = 'collection_updated',
-  collection_deleted = 'collection_deleted',
-  user_added = 'user_added',
-  user_updated = 'user_updated',
-  user_deleted = 'user_deleted',
-}
+export type IReason = 'card_added' | 'card_updated' | 'card_deleted' | 'collection_added' | 'collection_updated' | 'collection_deleted' | 'user_added' | 'user_updated' | 'user_deleted';
 export interface IDataChanged {
   cards: { [key: string]: IPusherEventType }
   users: { [key: string]: IPusherEventType }

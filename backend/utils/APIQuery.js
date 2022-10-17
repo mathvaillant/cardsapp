@@ -22,7 +22,7 @@ class APIQuery {
       ]
     }, []);
 
-    this.mongooseQuery = this.mongooseQuery.find({ $or: regexQueryArray }); 
+    this.mongooseQuery = this.mongooseQuery.find({ $or: regexQueryArray });
     
     return this;
   }
@@ -30,7 +30,11 @@ class APIQuery {
   paginate() {
     const page = Math.abs(parseInt(this.requestQuery.page)) || 1;
     const limit = 10;
-    const skip = (page - 1) * limit; 
+    const skip = (page - 1) * limit;
+    
+    this.requestQuery.skip = skip;
+    this.requestQuery.limit = limit;
+    this.requestQuery.page = page;
     this.mongooseQuery = this.mongooseQuery.skip(skip).limit(limit);
     return this;
   }

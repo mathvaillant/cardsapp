@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { ICollection } from '../../slices/collectionsSlice';
 import Card from '@mui/material/Card';
@@ -7,10 +7,10 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CardMedia from '@mui/material/CardMedia';
 import CardsIcon from '@mui/icons-material/Style';
-import { useAppSelector } from '../../app/hooks';
-import { getStateAllCards } from '../../selectors/cards';
 import OwnerShipLabel from "../OwnerShipLabel";
 import './CollectionItem.scss';
+import { ICard } from "../../slices/cardsSlice";
+import CardsServices from "../../services/cardsServices";
 
 interface Props {
 	collection: ICollection;
@@ -20,12 +20,15 @@ interface Props {
 const CollectionItem: React.FC<Props> = ({ collection }) => {
 	const navigator = useNavigate();
 	const { name, _id, createdBy } = collection;
+	const [cardsInCollection, setCardsInCollection] = useState<ICard[]>([]);
 
-	const stateCards = useAppSelector(getStateAllCards);
-
-	const cardsInCollection = React.useMemo(() => {
-		return stateCards.filter(card => card.collectionId === _id);
-	}, [stateCards, _id]);
+	useEffect(() => {
+		(async () => {
+			const { data } = await CardsServices.getCardsInCollection(collection._id);
+			if(!data) return;
+			setCardsInCollection(data);
+		})();
+	}, [collection]);
 
 	const handleOpenSidebar = () => navigator(`/collections/${_id}`);
 

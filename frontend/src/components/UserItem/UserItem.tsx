@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
-import { Avatar, CardActionArea, Divider, Tooltip } from '@mui/material';
+import { Avatar, CardActionArea, Divider } from '@mui/material';
 import CardContent from '@mui/material/CardContent';
 import { IUser } from "../../slices/authSlice";
 import './UserItem.scss';

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import CardsServices from "../../services/cardsServices";
 import CustomSidebar from "../CustomSidebar";
 import { getStateCard } from "../../selectors/cards";
+import { ICard } from "../../slices/cardsSlice";
+import _ from "underscore";
 import { getStateAllCollections } from "../../selectors/collections";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
@@ -15,15 +17,13 @@ import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import { Button } from "@mui/material";
 import { toastr } from "react-redux-toastr";
 import './CardSidebar.scss';
-import _ from "underscore";
-import { ICard } from "../../slices/cardsSlice";
+import CollectionServices from "../../services/collectionsServices";
+import { ICollection } from "../../slices/collectionsSlice";
 
 const CardSidebar = () => {
   const navigate = useNavigate();
   const params = useParams();
   const cardId = params.id || '';
-
-  const stateCollections = useAppSelector(getStateAllCollections);
 
   const [lastResponseCard, setLastResponseCard] = useState<ICard | null>(null);
   const [savingChanges, setSavingChanges] = useState(false);
@@ -31,18 +31,21 @@ const CardSidebar = () => {
   const [description, setDescription] = useState('');
   const [value, setValue] = useState(0);
   const [collectionId, setCollectionId] = useState<string | undefined>(undefined);
+  const [collections, setCollections] = useState<ICollection[]>([]);
 
   useEffect(() => {
     if(lastResponseCard) return;
     
     (async () => {
       const { status, message, data } = await CardsServices.getSingleCard(cardId);
+      const { data: collections } = await CollectionServices.getAllCollections();
 
       if(!data) {
         toastr.error(status, message);
         return;
       }
-
+      
+      setCollections(collections);
       setLastResponseCard(data);
       setName(data.name);
       setDescription(data.description);
@@ -111,7 +114,7 @@ const CardSidebar = () => {
     })
   };
 
-  const currentCollection = stateCollections.find(col => col._id === collectionId);
+  const currentCollection = collections.find(col => col._id === collectionId);
 
   return (
     <CustomSidebar>
@@ -180,7 +183,7 @@ const CardSidebar = () => {
               size="small"
               id="collection"
               value={currentCollection}
-              options={stateCollections.filter(c => c.createdBy === lastResponseCard?.createdBy)}
+              options={collections.filter(c => c.createdBy === lastResponseCard?.createdBy)}
               filterSelectedOptions
               getOptionLabel={(option) => option.name}
               renderInput={(params) => (

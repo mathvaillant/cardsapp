@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CardsServices from "../../services/cardsServices";
 import CustomSidebar from "../CustomSidebar";
 import CollectionServices from "../../services/collectionsServices";
+import _ from "underscore";
 import { ICard } from "../../slices/cardsSlice";
-import { getStateAllCards } from "../../selectors/cards";
-import { getStateCollection } from "../../selectors/collections";
+import { ICollection } from "../../slices/collectionsSlice";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppSelector } from "../../app/hooks";
 import useDebounceCallback from "../../hooks/useDebounceCallback";
 import LoadingButton from '@mui/lab/LoadingButton';
 import Box from '@mui/material/Box';
@@ -17,28 +16,34 @@ import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import { Button } from "@mui/material";
 import { toastr } from "react-redux-toastr";
 import './CollectionSidebar.scss';
-import _ from "underscore";
 
 const CollectionSidebar = () => {
   const navigate = useNavigate();
   const params = useParams();
   const collectionId = params.id || '';
 
-  const stateCollection = useAppSelector(getStateCollection(collectionId));
-  const stateCards = useAppSelector(getStateAllCards);
-
+  const [lastResponseCol, setLastResponseCol] = useState<ICollection | null>(null);
   const [savingChanges, setSavingChanges] = useState(false);
   const [name, setName] = useState('');
   const [cards, setCards] = useState<ICard[]>([]);
 
-  React.useEffect(() => {
-    if(stateCollection) {
-      const cardsInCollection = stateCards.filter(c => c.collectionId === collectionId);
+  useEffect(() => {
+    if(lastResponseCol) return;
+    
+    (async () => {
+      const { status, message, data } = await CollectionServices.getSingleCollection(collectionId);
+      const { data: cards } = await CardsServices.getAllCards();
 
-      setName(stateCollection.name);
-      setCards(cardsInCollection);
-    }
-  }, [stateCollection, stateCards, collectionId]);
+      if(!data) {
+        toastr.error(status, message);
+        return;
+      }
+
+      setCards(cards);
+      setLastResponseCol(data);
+      setName(data.name);
+    })()
+  }, [collectionId, lastResponseCol]);
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSavingChanges(true);
@@ -51,10 +56,10 @@ const CollectionSidebar = () => {
   };
 
   const handleSaveChanges = async (): Promise<void> => {
-    const cardsIdsInCollection = stateCards.filter(c => c.collectionId === collectionId).map(el => el._id);
+    const cardsIdsInCollection = cards.filter(c => c.collectionId === collectionId).map(el => el._id);
     const newCardsIdsSelected = cards.map((card: ICard) => card._id);
 
-    const nameChanged = name !== stateCollection?.name;
+    const nameChanged = lastResponseCol && lastResponseCol.name !== name;
     const cardsChanged = !_.isEqual(newCardsIdsSelected, cardsIdsInCollection);
 
     if(nameChanged) {
@@ -79,8 +84,8 @@ const CollectionSidebar = () => {
       onOk: async () => {
         try {
           await CollectionServices.deleteCollection(collectionId);
-          navigate('/collections');
           toastr.success('Collection successfully deleted', '');
+          navigate('/collections');
         } catch (error) {
           toastr.error('Something went wrong', '');
         }
@@ -100,7 +105,7 @@ const CollectionSidebar = () => {
           gap: 5
         }}
       >
-        {!stateCollection ? (
+        {!name ? (
           <Typography variant="h4">Collection Not Found!</Typography>
         ) : (
           <>
@@ -135,10 +140,10 @@ const CollectionSidebar = () => {
               multiple
               size="small"
               id="Cards"
-              value={cards}
+              value={cards.filter(c => c.collectionId === collectionId)}
               isOptionEqualToValue={(option, value) => value._id === option._id}
               filterSelectedOptions
-              options={stateCards.filter(c => c.createdBy === stateCollection?.createdBy)}
+              options={cards.filter(c => c.createdBy === lastResponseCol?.createdBy)}
               getOptionLabel={(option) => option.name}
               renderInput={(params) => (
                 <TextField

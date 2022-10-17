@@ -1,26 +1,36 @@
 const CardCollection = require('../../models/cardCollectionModel');
-const APIQuery = require("../../utils/APIQuery");
 
 exports.getAllCollections = async (req, res, next) => {
   try {
-    let collections = [];
+    const isAdmin = req.user.role === 'admin';
+    const page = Math.abs(req.query.page || 0) || 1;
+    const limit = Math.abs(req.query.limit || 0) || 10;
+    const searchValue = req?.query?.searchValue?.trim() !== '' ? req.query.searchValue : null;
 
-    if(req.user.role === 'admin') {
-      const mongooseQuery = CardCollection.find();
-      collections = new APIQuery(mongooseQuery, req.query).filter().paginate();
-    } else {
-      const mongooseQuery = CardCollection.find({ createdBy: req.user._id });
-      collections = new APIQuery(mongooseQuery, req.query).filter().paginate();
+    const options = {
+      ...(!isAdmin && { createdBy: req.user._id }),
+      ...(searchValue && { name: { $regex: searchValue, $options : 'i' },
+      })
     }
 
-    const collectionsResult = await collections.mongooseQuery;  
+    const Collections = await CardCollection 
+      .find(options)
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .exec();
+
+    const totalDocs = await CardCollection.find(options).count();
+    const totalPages = Math.ceil(totalDocs / limit);
+    const totalOnPage = Collections.length;
 
     res.status(200).json({
       status: 'success',
       message: 'Collections successfully retrieved',
-      results: collectionsResult.length,
-      data: collectionsResult
-    })
+      totalDocs,
+      totalPages,
+      totalOnPage,
+      data: Collections
+    });
   } catch (error) {
     next(error);
   }

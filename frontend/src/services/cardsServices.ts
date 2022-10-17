@@ -31,7 +31,9 @@ interface ResponseDeleteSuccess extends APIResponse {
 
 interface ResponseGetAllSuccess extends APIResponse {
   data: ICard[]
-  results: number
+  totalDocs: number
+  totalPages: number
+  totalOnPage: number
 }
 
 const getSingleCard = async (cardId: string): Promise<ResponseGetSingleSuccess | ResponseError> => {
@@ -44,10 +46,21 @@ const getSingleCard = async (cardId: string): Promise<ResponseGetSingleSuccess |
   }
 }
 
-const getAllCards = async (page?: number, searchValue: string = ''): Promise<ResponseGetAllSuccess | ResponseError> => {
+const getAllCards = async (page: number = 1, searchValue: string = '') => {
   try {
     const token = getToken();
-    const reqUrl = `${API_URL}/cards?page=${page}&name=${searchValue}&description=${searchValue}`;
+    const reqUrl = `${API_URL}/cards?page=${page}&searchValue=${searchValue}`;
+    const { data } = await axios.get(reqUrl, mapAuthBearerToken(token));
+    return data;
+  } catch (error) {
+    return mapErrorResponse(error);    
+  }
+}
+
+const getCardsInCollection = async (collectionId: string) => {
+  try {
+    const token = getToken();
+    const reqUrl = `${API_URL}/cards/byCollection?collectionId=${collectionId}`;
     const { data } = await axios.get(reqUrl, mapAuthBearerToken(token));
     return data;
   } catch (error) {
@@ -106,6 +119,7 @@ const CardsServices = {
   updateCard,
   createNewCard,
   updateMultiple,
+  getCardsInCollection,
 }
 
 export default CardsServices;

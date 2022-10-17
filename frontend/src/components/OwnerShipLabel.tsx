@@ -1,16 +1,16 @@
-import { Button, Typography } from "@mui/material";
 import * as React from 'react';
+import { Button, Typography } from "@mui/material";
 import { useAppSelector } from "../app/hooks";
-import { getStateLoggedUser, getStateUsers } from "../selectors/users";
+import { getStateLoggedUser } from "../selectors/users";
 
 const OwnerShipLabel = ({ createdBy } : { createdBy: string }) => {
   const stateUserLogged = useAppSelector(getStateLoggedUser);
-  const stateUsers = useAppSelector(getStateUsers);
 
   if(stateUserLogged?.role !== 'admin') return null;
   
   const stateUserIsOwner = createdBy === stateUserLogged?._id;
-  const owner = stateUsers.find(user => user._id === createdBy);
+
+  if(!stateUserIsOwner) return null;
 
   return (
     <Button variant='contained' size="small" color="secondary">
@@ -19,7 +19,7 @@ const OwnerShipLabel = ({ createdBy } : { createdBy: string }) => {
         variant="body2"
         component={'small'}
       >
-          <strong>Owner</strong>: {stateUserIsOwner ? 'Me' : owner?.username }
+          <strong>Mine</strong>
       </Typography>
     </Button>
   )

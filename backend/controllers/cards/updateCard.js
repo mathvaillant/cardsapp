@@ -6,7 +6,7 @@ exports.updateCard = async (req, res, next) => {
 
     const card = await Card.findOneAndUpdate({ _id: req.params.id }, {
       name,
-      value,
+      value: value || 0,
       description,
       collectionId,
     },{

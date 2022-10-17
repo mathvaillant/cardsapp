@@ -10,6 +10,10 @@ interface ResponseCreateSuccess extends APIResponse {
   data: ICollection;
 }
 
+interface ResponseGetSingleSuccess extends APIResponse {
+  data: ICollection;
+}
+
 interface ResponseUpdateSuccess extends ResponseCreateSuccess {}
 
 interface ResponseDeleteSuccess extends APIResponse {
@@ -18,13 +22,23 @@ interface ResponseDeleteSuccess extends APIResponse {
 
 interface ResponseGetAllSuccess extends APIResponse {
   data: ICollection[]
-  results: number
 }
 
-const getAllCollections = async (): Promise<ResponseGetAllSuccess | ResponseError> => {
+const getSingleCollection = async (collectionId: string): Promise<ResponseGetSingleSuccess | ResponseError> => {
+  const token = getToken();
+  try {
+    const { data } = await axios.get(`${API_URL}/cardCollections/${collectionId}`, mapAuthBearerToken(token));
+    return data;
+  } catch (error) {
+    return mapErrorResponse(error);
+  }
+}
+
+const getAllCollections = async (page: number = 1, searchValue: string = '') => {
   try {
     const token = getToken();
-    const { data } = await axios.get(`${API_URL}/cardCollections`, mapAuthBearerToken(token));
+    const reqUrl = `${API_URL}/cardCollections?page=${page}&searchValue=${searchValue}`;
+    const { data } = await axios.get(reqUrl, mapAuthBearerToken(token));
 
     return data;
   } catch (error) {
@@ -75,6 +89,7 @@ const CollectionServices = {
   deleteCollection,
   updateCollection,
   createNewCollection,
+  getSingleCollection
 }
 
 export default CollectionServices;

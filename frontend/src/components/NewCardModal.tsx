@@ -9,6 +9,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import CardsServices from "../services/cardsServices";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   modalOpen: boolean
@@ -16,6 +17,7 @@ interface Props {
 }
 
 const NewCardModal: React.FC<Props> = ({ modalOpen, handleClose }) => {
+  const navigate = useNavigate();
   const stateCollections = useAppSelector(state => state?.collections);
   const [data, setData] = React.useState({
     name: '',
