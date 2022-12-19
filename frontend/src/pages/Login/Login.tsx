@@ -1,58 +1,60 @@
-import * as React from 'react';
-import { toastr } from 'react-redux-toastr';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { useNavigate } from 'react-router';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { login } from "../../slices/authSlice";
+import * as React from "react"
+import { toastr } from "react-redux-toastr"
+import { useAppDispatch, useAppSelector } from "../../app/hooks"
+import { useNavigate } from "react-router"
+import Avatar from "@mui/material/Avatar"
+import Button from "@mui/material/Button"
+import TextField from "@mui/material/TextField"
+import Link from "@mui/material/Link"
+import Grid from "@mui/material/Grid"
+import Box from "@mui/material/Box"
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
+import Typography from "@mui/material/Typography"
+import Container from "@mui/material/Container"
+import { login } from "../../slices/authSlice"
 
 const Login = () => {
-  const dispatch = useAppDispatch();
-  const navigator = useNavigate();
-  const authState = useAppSelector(state => state.auth);
+  const dispatch = useAppDispatch()
+  const navigator = useNavigate()
+  const authState = useAppSelector((state) => state.auth)
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    const data = new FormData(e.currentTarget);
+    e.preventDefault()
 
-    dispatch(login({
-      username: data.get('username') as string,
-      password: data.get('password') as string,
-    }))
-  };
+    const data = new FormData(e.currentTarget)
+
+    dispatch(
+      login({
+        username: data.get("username") as string,
+        password: data.get("password") as string
+      })
+    )
+  }
 
   React.useEffect(() => {
-    if(authState.error !== '') {
-      toastr.error(authState.error, '');
-      return;
+    if (authState.error !== "") {
+      toastr.error(authState.error, "")
+      return
     }
 
-    if(authState.isLoggedIn) {
-      toastr.success('Done!', 'Successfully logged in!');
-      navigator('/home');
+    if (authState.isLoggedIn) {
+      toastr.success("Done!", "Successfully logged in!")
+      navigator("/home")
     }
-  }, [authState, navigator]);
+  }, [authState, navigator])
 
   return (
     <Container component="main" maxWidth="xs">
       <Box
         sx={{
           marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center"
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <LockOutlinedIcon color="primary"/>
+        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <LockOutlinedIcon color="primary" />
         </Avatar>
         <Typography component="h1" variant="h5">
           Log In
@@ -99,7 +101,7 @@ const Login = () => {
         </Box>
       </Box>
     </Container>
-  );
+  )
 }
 
-export default Login;
+export default Login

@@ -1,6 +1,8 @@
 @import '../../styles/variables.scss';
 
 .CardItem {
+	text-align: center;
+
 	&.openOnSidebar {
 		transform: rotate3d(1, 1, 1, -5deg);
 	}

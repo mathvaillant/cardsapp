@@ -1,6 +1,10 @@
 import React from 'react';
 
-const useScrollBottomCallback = (callback: () => void, disableCallback: boolean, dependencies: any[]) => {
+const useScrollBottomCallback = (
+	callback: () => void, 
+	disableCallback: boolean, 
+	dependencies: string[] | number[]
+) => {
   React.useEffect(() => {
 		if(disableCallback) return;
 

@@ -1,29 +1,9 @@
+import { IGetUser, ResponseError } from "@internal/shared";
 import axios from 'axios';
-import { IUser } from "../slices/authSlice";
-import { APIResponse, ResponseError } from "../utils/shared/types";
-import { mapErrorResponse } from "../utils/utils";
-import { API_URL } from "./constants";
-import { getToken, mapAuthBearerToken } from "./utils";
+import { API_URL } from "../constants/api";
+import { getToken, mapAuthBearerToken, mapErrorResponse } from "../utils/utils";
 
-interface ResponseAllUsers extends APIResponse {
-  data: IUser[]
-  totalDocs: number
-  totalPages: number
-  totalOnPage: number
-}
-
-interface ResponseUpdateSuccess extends APIResponse {
-  data: IUser
-}
-interface ResponseGetSingleSuccess extends APIResponse {
-  data: IUser
-}
-
-interface ResponseDeleteSuccess extends APIResponse {
-  data: {}
-}
-
-const getSingleUser = async (userId: string): Promise<ResponseGetSingleSuccess | ResponseError> => {
+const getSingleUser = async (userId: string): Promise<IGetUser | ResponseError> => {
   try {
     const token = getToken();
     const { data } = await axios.get(`${API_URL}/users/${userId}`, mapAuthBearerToken(token));
@@ -44,8 +24,7 @@ const getAllUsers = async (page: number = 1, searchValue: string = '') => {
   }
 }
 
-const updateUser = async (userId: string, name: string, username: string): Promise<
-  ResponseUpdateSuccess | ResponseError
+const updateUser = async (userId: string, name: string, username: string): Promise<IGetUser | ResponseError
 > => {
   try {
     const token = getToken();
@@ -58,7 +37,7 @@ const updateUser = async (userId: string, name: string, username: string): Promi
   }
 }
 
-const deleteUser = async (userId: string): Promise<ResponseDeleteSuccess | ResponseError> => {
+const deleteUser = async (userId: string): Promise<{ data: {} } | ResponseError> => {
   try {
     const token = getToken();
     const { data } = await axios.delete(`${API_URL}/users/${userId}`, mapAuthBearerToken(token));

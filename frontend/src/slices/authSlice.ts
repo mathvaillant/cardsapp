@@ -1,32 +1,16 @@
+import { ILoginUser, IRegisterUser, IResponseUser } from "@internal/shared";
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-
 import AuthServices from "../services/authServices";
 
 const user = JSON.parse(localStorage.getItem('user') as string);
 
-export interface IUser {
-  token: string
-  _id: string
-  name: string
-  username: string
-  role: string
-  cards: string[]
-  collections: string[]
-}
-
-interface IAuth {
-  isLoggedIn: boolean
-  user: IUser | null | undefined
-  error: string
-}
-
-const initialState: IAuth = user
+const initialState = user
  ? { isLoggedIn: true, user, error: '' }
  : { isLoggedIn: false, user: null, error: '' };
 
 export const signUp = createAsyncThunk(
   'auth/signup',
-  async ({ name, username, password } : { name: string, username: string, password: string }) => {
+  async ({ name, username, password } : IRegisterUser ) => {
     try {
       const response = await AuthServices.signUp(name, username, password);
       return response;
@@ -39,7 +23,7 @@ export const signUp = createAsyncThunk(
 
 export const login = createAsyncThunk(
   'auth/login',
-  async ({ username, password } : { username: string, password: string }) => {
+  async ({ username, password } : ILoginUser ) => {
     try {
       const response = await AuthServices.login(username, password);
       return response;
@@ -57,7 +41,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     updateLoggedUser(state, action) {
-      state.user = action.payload as IUser;
+      state.user = action.payload as IResponseUser;
 
       const currentUserData = JSON.parse(localStorage.getItem('user') as string);
       localStorage.setItem('user', JSON.stringify({

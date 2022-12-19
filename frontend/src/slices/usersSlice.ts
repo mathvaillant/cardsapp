@@ -1,8 +1,8 @@
+import { IResponseUser } from "@internal/shared";
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import UserServices from "../services/userServices";
-import { IUser } from "./authSlice";
 
-const initialState: IUser[] = [];
+const initialState: IResponseUser[] = [];
 
 export const getAllUsers = createAsyncThunk(
   'users/getAllUsers',

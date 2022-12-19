@@ -1,13 +1,12 @@
+import { ResponseAuthSuccess, ResponseError } from "@internal/shared";
 import axios from 'axios';
-import { IUser } from "../slices/authSlice";
-import { APIResponse, ResponseError } from "../utils/shared/types";
-import { API_URL } from "./constants";
+import { API_URL } from "../constants/api";
 
-interface ResponseAuthSuccess extends APIResponse {
-  data: IUser;
-}
-
-const signUp = async (name: string, username: string, password: string): Promise<ResponseAuthSuccess | ResponseError> => {
+const signUp = async (
+  name: string, 
+  username: string, 
+  password: string
+): Promise<ResponseAuthSuccess | ResponseError> => {
   const { data } = await axios.post(`${API_URL}/auth/signup`, {
     name,
     username,
@@ -21,7 +20,10 @@ const signUp = async (name: string, username: string, password: string): Promise
   return data;
 };
 
-const login = async (username: string, password: string): Promise<ResponseAuthSuccess | ResponseError> => {
+const login = async (
+  username: string, 
+  password: string
+): Promise<ResponseAuthSuccess | ResponseError> => {
   const { data } = await axios.post(`${API_URL}/auth/login`, {
     username,
     password
@@ -34,7 +36,7 @@ const login = async (username: string, password: string): Promise<ResponseAuthSu
   return data;
 };
 
-const logout = () => {
+const logout = (): void => {
   localStorage.removeItem('user');
   window.location.replace('/login');
 }

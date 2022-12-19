@@ -1,7 +1,7 @@
-import Pusher from 'pusher-js';
+import Pusher from "pusher-js"
 
 export function pusherInstance() {
-  return new Pusher("c5f59b24bc12f9993c86", {
-    cluster: 'eu'
-  });
-};
+  return new Pusher(process.env.REACT_APP_PUSHER_KEY || "", {
+    cluster: process.env.REACT_APP_PUSHER_CLUSTER
+  })
+}

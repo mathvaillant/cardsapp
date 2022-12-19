@@ -1,19 +1,8 @@
+import { IResponseCard } from "@internal/shared";
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import CardsServices from "../services/cardsServices";
 
-export interface ICard {
-  _id: string
-  name: string
-  value: number
-  description: string
-  createdBy: string
-  collectionId: string | undefined
-  createdAt: string
-  updatedAt: string
-  colors: string[]
-}
-
-const initialState: ICard[] = [];
+const initialState: IResponseCard[] = [];
 
 export const getAllCards = createAsyncThunk(
   'cards/getAllCards',

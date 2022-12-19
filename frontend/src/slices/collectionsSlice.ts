@@ -1,15 +1,8 @@
+import { IResponseCollection } from "@internal/shared";
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import CollectionServices from "../services/collectionsServices";
 
-export interface ICollection {
-  _id: string
-  name: string
-  createdBy: string
-  createdAt: string
-  updatedAt: string
-}
-
-const initialState: ICollection[] = [];
+const initialState: IResponseCollection[] = [];
 
 export const getAllCollections = createAsyncThunk(
   'collections/getAllCollections',

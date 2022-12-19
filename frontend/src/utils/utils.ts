@@ -1,4 +1,4 @@
-import { ResponseError } from "./shared/types";
+import { ResponseError } from "@internal/shared";
 
 export const mapErrorResponse = (error: any) => {
   const responseError = {
@@ -7,4 +7,17 @@ export const mapErrorResponse = (error: any) => {
   }
 
   return responseError as ResponseError;
+}
+
+export const mapAuthBearerToken = (token: string) => {
+  return { 
+    headers: { 
+      Authorization: `Bearer ${token}` 
+    }
+  }
+}
+
+export const getToken = (): string => {
+  const user = JSON.parse(localStorage.getItem('user') as string);
+  return user.token;
 }
